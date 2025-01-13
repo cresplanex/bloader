@@ -34,6 +34,7 @@ bloader run -f main.yaml -d Username=test
 
 If you set up as above, you can access the following.
 
+{% raw %}
 ``` yaml
 kind: OneExecute
 type: http
@@ -51,6 +52,7 @@ request:
     username: "{{ .Values.Username }}"
   response_type: "json"
 ```
+{% endraw %}
 
 However, by default, it is passed as a string. It can be passed as various types by doing the following.
 
