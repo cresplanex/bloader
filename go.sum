@@ -1,7 +1,7 @@
 buf.build/gen/go/cresplanex/bloader/grpc/go v1.5.1-00000000000000-6d2776ba6018.2 h1:tHJPcf1zuXBGKVNnzvBiQ2Dek9Cg5wTw578sMDCcShE=
 buf.build/gen/go/cresplanex/bloader/grpc/go v1.5.1-00000000000000-6d2776ba6018.2/go.mod h1:EkVNFhvgaMYE9XOaa4oW/EBlthfQYZExmECouldybpc=
-buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.1-00000000000000-6d2776ba6018.1 h1:+oBWhQGnWOtS/Ip+bhsWXidRLgzfwcpwspoj4TyxXOY=
-buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.1-00000000000000-6d2776ba6018.1/go.mod h1:gyq/+6VX/BGNTQr+gfwFiQiRO7Hl7iNpf3WC/Gs2BfI=
+buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.2-20250113095333-4e339d6395cb.1 h1:OBlEAIYYYtxateY4ivwpbP48itcy7Qf0u+cJsiFECng=
+buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.2-20250113095333-4e339d6395cb.1/go.mod h1:BNOefsywCyktB6XGo7Yc3pqUS8fnQ44EKuxayrkrfu8=
 dario.cat/mergo v1.0.1 h1:Ra4+bf83h2ztPIQYNP99R6m+Y7KfnARDfID+a+vLl4s=
 dario.cat/mergo v1.0.1/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
 github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
@@ -131,8 +131,8 @@ google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 h1:
 google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237/go.mod h1:WtryC6hu0hhx87FDGxWCDptyssuo68sk10vYjF+T9fY=
 google.golang.org/grpc v1.64.1 h1:LKtvyfbX3UGVPFcGqJ9ItpVWW6oN/2XqTxfAnwRRXiA=
 google.golang.org/grpc v1.64.1/go.mod h1:hiQF4LFZelK2WKaP6W0L92zGHtiQdZxk8CrSdvyjeP0=
-google.golang.org/protobuf v1.36.1 h1:yBPeRvTftaleIgM3PZ/WBIZ7XM/eEYAaEyCwvyjq/gk=
-google.golang.org/protobuf v1.36.1/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
+google.golang.org/protobuf v1.36.2 h1:R8FeyR1/eLmkutZOM5CWghmo5itiG9z0ktFlTVLuTmU=
+google.golang.org/protobuf v1.36.2/go.mod h1:9fA7Ob0pmnwhb644+1+CVWFRbNajQ6iRojtC/QF5bRE=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 h1:YR8cESwS4TdDjEe65xsg0ogRM/Nc3DYOhEAlW+xobZo=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
