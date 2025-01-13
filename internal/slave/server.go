@@ -9,9 +9,10 @@ import (
 	"io"
 	"sync"
 
-	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
+
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/container"
 	"github.com/cresplanex/bloader/internal/encrypt"

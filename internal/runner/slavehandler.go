@@ -6,8 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/protobuf/proto"
+
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/logger"
 )
