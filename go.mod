@@ -3,8 +3,8 @@ module github.com/cresplanex/bloader
 go 1.23.3
 
 require (
-	buf.build/gen/go/cresplanex/bloader/grpc/go v1.5.1-00000000000000-6d2776ba6018.2
-	buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.1-00000000000000-6d2776ba6018.1
+	buf.build/gen/go/cresplanex/bloader/grpc/go v1.5.1-00000000000000-7373f689516c.2
+	buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.2-00000000000000-7373f689516c.1
 	github.com/BurntSushi/toml v1.4.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/boltdb/bolt v1.3.1
@@ -21,7 +21,7 @@ require (
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/text v0.21.0
 	google.golang.org/grpc v1.64.1
-	google.golang.org/protobuf v1.36.1
+	google.golang.org/protobuf v1.36.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
