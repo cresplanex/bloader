@@ -4,7 +4,7 @@ go 1.23.3
 
 require (
 	buf.build/gen/go/cresplanex/bloader/grpc/go v1.5.1-00000000000000-7373f689516c.2
-	buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.2-00000000000000-7373f689516c.1
+	buf.build/gen/go/cresplanex/bloader/protocolbuffers/go v1.36.2-20250113124919-d31b831c10b6.1
 	github.com/BurntSushi/toml v1.4.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/boltdb/bolt v1.3.1
