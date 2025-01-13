@@ -268,6 +268,7 @@ bloader completion bash > bloader-completion.bash
 ## 🎨 Editor Configuration
 If you are using **VS Code**, add the following configuration to your `.vscode/settings.json` file to ensure compatibility with YAML and other tools:
 
+{% raw %}
 ```json
 {
     "yaml.validate": false,
@@ -279,3 +280,4 @@ If you are using **VS Code**, add the following configuration to your `.vscode/s
     ]
 }
 ```
+{% endraw %}
