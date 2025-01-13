@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"net"
 
-	rpc "buf.build/gen/go/cresplanex/bloader/grpc/go/cresplanex/bloader/v1/bloaderv1grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/container"
 	"github.com/cresplanex/bloader/internal/logger"
@@ -45,7 +46,7 @@ func Run(ctr *container.Container) error {
 	slCtr := runner.NewConnectionContainer()
 	defer slCtr.AllDisconnect(ctr.Ctx)
 
-	rpc.RegisterBloaderSlaveServiceServer(grpcServer, NewServer(ctr, slCtr))
+	pb.RegisterBloaderSlaveServiceServer(grpcServer, NewServer(ctr, slCtr))
 	lister, err := net.Listen("tcp", fmt.Sprintf(":%d", ctr.Config.SlaveSetting.Port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)

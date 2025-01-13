@@ -2,45 +2,47 @@ syntax = "proto3";
 
 package cresplanex.bloader.v1;
 
+option go_package = "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1";
+
 enum AuthType {
-    AUTH_TYPE_UNSPECIFIED = 0;
-    AUTH_TYPE_OAUTH2 = 1;
-    AUTH_TYPE_API_KEY = 2;
-    AUTH_TYPE_BASIC = 3;
-    AUTH_TYPE_PRIVATE_KEY = 4;
-    AUTH_TYPE_JWT = 5;
+  AUTH_TYPE_UNSPECIFIED = 0;
+  AUTH_TYPE_OAUTH2 = 1;
+  AUTH_TYPE_API_KEY = 2;
+  AUTH_TYPE_BASIC = 3;
+  AUTH_TYPE_PRIVATE_KEY = 4;
+  AUTH_TYPE_JWT = 5;
 }
 
 message Auth {
-    AuthType type = 1;
-    oneof auth {
-        AuthOAuth2 oauth2 = 2;
-        AuthApiKey api_key = 3;
-        AuthBasic basic = 4;
-        AuthPrivateKey private_key = 5;
-        AuthJwt jwt = 6;
-    }
+  AuthType type = 1;
+  oneof auth {
+    AuthOAuth2 oauth2 = 2;
+    AuthApiKey api_key = 3;
+    AuthBasic basic = 4;
+    AuthPrivateKey private_key = 5;
+    AuthJwt jwt = 6;
+  }
 }
 
 message AuthOAuth2 {
-    string access_token = 1;
-    string token_type = 2;
+  string access_token = 1;
+  string token_type = 2;
 }
 
 message AuthApiKey {
-    string api_key = 1;
-    string header_name = 2;
+  string api_key = 1;
+  string header_name = 2;
 }
 
 message AuthBasic {
-    string username = 1;
-    string password = 2;
+  string username = 1;
+  string password = 2;
 }
 
 message AuthPrivateKey {
-    string private_key = 1;
+  string private_key = 1;
 }
 
 message AuthJwt {
-    string jwt = 1;
+  string jwt = 1;
 }

@@ -1,5 +1,8 @@
 # 🌈 Style Guide
 
+> [!WARNING]
+> Please check [Buf Usage Guide](buf.md) for notes on `proto` styles.
+
 This style guide provides conventions and best practices for writing clean, maintainable, and consistent code in this Go project. Following this guide ensures that the codebase remains easy to read and contributes to a collaborative environment.
 
 ---

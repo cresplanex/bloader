@@ -4,33 +4,35 @@ package cresplanex.bloader.v1;
 
 import "cresplanex/bloader/v1/encrypt.proto";
 
+option go_package = "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1";
+
 message StoreDataList {
-    repeated StoreData data = 1;
+  repeated StoreData data = 1;
 }
 
 message StoreData {
-    string bucket_id = 1;
-    string store_key = 2;
-    bytes data = 3;
-    Encryption encryption = 4;
+  string bucket_id = 1;
+  string store_key = 2;
+  bytes data = 3;
+  Encryption encryption = 4;
 }
 
 message StoreExportDataList {
-    repeated StoreExportData data = 1;
+  repeated StoreExportData data = 1;
 }
 
 message StoreExportData {
-    string bucket_id = 1;
-    string store_key = 2;
-    bytes data = 3;
+  string bucket_id = 1;
+  string store_key = 2;
+  bytes data = 3;
 }
 
 message StoreImportRequestList {
-    repeated StoreImportRequest data = 1;
+  repeated StoreImportRequest data = 1;
 }
 
 message StoreImportRequest {
-    string bucket_id = 1;
-    string store_key = 2;
-    Encryption encryption = 4;
+  string bucket_id = 1;
+  string store_key = 2;
+  Encryption encryption = 4;
 }

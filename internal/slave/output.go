@@ -3,7 +3,7 @@ package slave
 import (
 	"context"
 
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/logger"
 	"github.com/cresplanex/bloader/internal/output"

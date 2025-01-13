@@ -13,12 +13,14 @@ const (
 
 // ForOverride represents the configuration for the override service
 type ForOverride struct {
+	Version  *string         `mapstructure:"version"`
 	Env      *string         `mapstructure:"env"`
 	Override *OverrideConfig `mapstructure:"override"`
 }
 
 // ValidConfigForOverride represents the configuration for the override service
 type ValidConfigForOverride struct {
+	Version  Version             `mapstructure:"version"`
 	Env      string              `mapstructure:"env"`
 	Override ValidOverrideConfig `mapstructure:"override"`
 }
@@ -26,6 +28,15 @@ type ValidConfigForOverride struct {
 // Validate validates the configuration for the override service
 func (c ForOverride) Validate() (ValidConfigForOverride, error) {
 	var valid ValidConfigForOverride
+	if c.Version == nil {
+		return ValidConfigForOverride{}, ErrVersionRequired
+	}
+	switch *c.Version {
+	case string(Version1):
+		valid.Version = Version1
+	default:
+		return ValidConfigForOverride{}, ErrVersionInvalid
+	}
 	if c.Env == nil {
 		return ValidConfigForOverride{}, ErrEnvRequired
 	}
@@ -44,6 +55,7 @@ func (c ForOverride) Validate() (ValidConfigForOverride, error) {
 
 // Config represents the application configuration
 type Config struct {
+	Version      *string             `mapstructure:"version"`
 	Type         *string             `mapstructure:"type"`
 	Env          *string             `mapstructure:"env"`
 	Loader       *LoaderConfig       `mapstructure:"loader"`
@@ -62,6 +74,7 @@ type Config struct {
 
 // ValidConfig represents the application configuration
 type ValidConfig struct {
+	Version      Version
 	Type         Type
 	Env          string
 	Loader       ValidLoaderConfig
@@ -81,6 +94,15 @@ type ValidConfig struct {
 // Validate validates the configuration
 func (c Config) Validate() (ValidConfig, error) {
 	var valid ValidConfig
+	if c.Version == nil {
+		return ValidConfig{}, ErrVersionRequired
+	}
+	switch *c.Version {
+	case string(Version1):
+		valid.Version = Version1
+	default:
+		return ValidConfig{}, ErrVersionInvalid
+	}
 	if c.Type == nil {
 		return ValidConfig{}, ErrTypeRequired
 	}

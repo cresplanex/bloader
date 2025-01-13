@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"

@@ -2,9 +2,10 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/config"
 	"github.com/cresplanex/bloader/internal/store"
@@ -26,6 +27,9 @@ func NewAPIKeyAuthenticator(conf config.ValidAuthAPIKeyConfig) (Authenticator, e
 
 // Authenticate authenticates the user
 func (a *APIKeyAuthenticator) Authenticate(_ context.Context, _ store.Store) error {
+	fmt.Println(`With the specified authentication method(API Key), 
+	you can use your credentials without having to log in.`)
+
 	return nil
 }
 
@@ -54,6 +58,9 @@ func (a *APIKeyAuthenticator) IsExpired(_ context.Context, _ store.Store) bool {
 
 // Refresh refreshes the authentication information
 func (a *APIKeyAuthenticator) Refresh(_ context.Context, _ store.Store) error {
+	fmt.Println(`With the specified authentication method(API Key), 
+	you can use your credentials without having to log in.`)
+
 	return nil
 }
 

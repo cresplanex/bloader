@@ -58,6 +58,7 @@ Bloader supports multiple formats, including YAML, JSON, and TOML, via the Viper
 
 ### Example: Master Configuration
 ```yaml
+version: v1
 type: master
 env: "production"
 loader:
@@ -98,6 +99,7 @@ logging:
 
 ### Example: Slave Configuration
 ```yaml
+version: v1
 type: slave
 env: "production"
 slave_setting:
