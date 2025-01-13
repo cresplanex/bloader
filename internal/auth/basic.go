@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
@@ -26,6 +27,7 @@ func NewBasicAuthenticator(conf config.ValidAuthBasicConfig) (Authenticator, err
 
 // Authenticate authenticates the user
 func (a *BasicAuthenticator) Authenticate(_ context.Context, _ store.Store) error {
+	fmt.Println("With the specified authentication method(Basic Auth), you can use your credentials without having to log in.")
 	return nil
 }
 
@@ -54,6 +56,7 @@ func (a *BasicAuthenticator) IsExpired(_ context.Context, _ store.Store) bool {
 
 // Refresh refreshes the authentication information
 func (a *BasicAuthenticator) Refresh(_ context.Context, _ store.Store) error {
+	fmt.Println("With the specified authentication method(Basic Auth), you can use your credentials without having to log in.")
 	return nil
 }
 
