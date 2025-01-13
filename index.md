@@ -9,8 +9,8 @@ permalink: /
 <h1 align="center">
   <a href="https://docs.bloader.cresplanex.org">
     <picture>
-      <source height="60" media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/cresplanex/bloader/main/docs/static/bloader_logo.png">
-      <img height="60" alt="Bloader" src="https://raw.githubusercontent.com/cresplanex/bloader/main/docs/static/bloader_logo.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/cresplanex/bloader/main/docs/static/bloader_logo.png">
+      <img alt="Bloader" src="https://raw.githubusercontent.com/cresplanex/bloader/main/docs/static/bloader_logo.png" style="height:80px; margin-bottom:24px;">
     </picture>
   </a>
   <br>
