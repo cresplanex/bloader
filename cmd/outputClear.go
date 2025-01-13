@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 hayashi kenta <k.hayashi@cresplanex.com>
+Copyright © 2024 cresplanex <open-source-github@cresplanex.com>
 */
 package cmd
 
