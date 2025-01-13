@@ -36,7 +36,10 @@
   <em>Bloader is a cutting-edge load testing tool designed for <b>simplicity</b> and <b>flexibility</b>. While still in active development, it already offers robust features to execute and manage load tests effectively. We welcome contributions from the community to help shape its future. 💡</em>
 </p>
 
----
+> [!WARNING]  
+> This page describes minimal documentation but does not explain the definition of a loader.
+> 
+> See [Bloader Docs](https://docs.bloader.cresplanex.org/) for more information.
 
 ## ✨ Key Features
 
