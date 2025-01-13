@@ -17,7 +17,7 @@ nav_order: 1
 | `data[].value`        | Data to be stored. Supports any type that can be expressed in YAML.             | ✅                       | `any`       |
 | `data[].encrypt`      | Encryption settings for the stored data. Disabled by default.                  | ❌                       | `object`    |
 | `data[].encrypt.enabled` | Enable encryption for the stored data. Defaults to `false`.                  | ❌                       | `boolean`   |
-| `data[].encrypt.encrypt_id` | Encryption ID for the stored data. Required when encryption is enabled.   | ✅ (`enabled=true`)   | `string`    |
+| `data[].encrypt.encrypt_id` | Encryption ID for the stored data.   | ✅ (`enabled=true`)   | `string`    |
 
 ### Sample
 

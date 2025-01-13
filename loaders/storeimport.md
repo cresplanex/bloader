@@ -13,7 +13,11 @@ nav_order: 3
 |----------------|-----------------------------------------------------------------------|--------------|-------------|
 | `data`        | Values to be stored in memory                                         | ✅           | `[]object`  |
 | `data[].key`  | Key where the data will be stored in memory                           | ✅           | `string`    |
-| `data[].value`| Data to be stored in memory. Supports any type expressible in YAML.   | ✅           | `any`       |
+| `data[].bucket_id`| Bucket ID for the stored data.   | ✅           | `string`       |
+| `data[].store_key`| Store Key for the stored data.   | ✅           | `string`       |
+| `data[].encrypt`      | Encryption settings for the stored data. Disabled by default.                  | ❌                       | `object`    |
+| `data[].encrypt.enabled` | Enable encryption for the stored data. Defaults to `false`.                  | ❌                       | `boolean`   |
+| `data[].encrypt.encrypt_id` | Encryption ID for the stored data.   | ✅ (`enabled=true`)   | `string`    |
 
 
 ### Sample
