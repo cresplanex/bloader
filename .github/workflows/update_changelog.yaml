@@ -21,7 +21,7 @@ jobs:
         id: tag_details
         run: |
           echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          PREV_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF}^)
+          PREV_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF}^ 2>/dev/null || git rev-list --max-parents=0 HEAD)
           git log ${PREV_TAG}..HEAD --pretty=format:'%s (%an <%ae>) [%ci]' > commits.txt
           echo "" >> commits.txt
       - name: Update CHANGELOG.md
