@@ -194,7 +194,7 @@ We welcome contributions of all kinds! If you're interested in improving Bloader
 2. Make your changes in a new branch.
 3. Submit a pull request with a detailed description.
 
-For more details, see [CONTRIBUTION.md](./docs/contributing/index.md).
+For more details, see [contribution file](./docs/contributing/index.md).
 
 ---
 
