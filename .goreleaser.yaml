@@ -1,0 +1,175 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+
+project_name: bloader
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -X 'github.com/cresplanex/bloader/cmd.Version={{.Version}}'
+      - -X 'github.com/cresplanex/bloader/cmd.Commit={{.Commit}}'
+      - -X 'github.com/cresplanex/bloader/cmd.BuildTime={{.Date}}'
+
+archives:
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{ .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+
+brews:
+  - name: bloader
+    repository:
+      owner: cresplanex
+      name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+
+nfpms:
+  - package_name: bloader
+    bindir: /usr/bin
+    file_name_template: >-
+      {{ .ProjectName }}_
+      {{ .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    formats:
+      - apk
+      - deb
+      - rpm
+      - termux.deb
+      - archlinux
+    maintainer: "Hayashi Kenta <k.hayashi@cresplanex.com>"
+    # Contents to add to the package.
+    # GoReleaser will automatically add the binaries.
+    # contents:
+      # # Basic file that applies to all packagers
+      # - src: path/to/foo
+      #   dst: /usr/bin/foo
+
+      # # This will add all files in some/directory or in subdirectories at the
+      # # same level under the directory /etc. This means the tree structure in
+      # # some/directory will not be replicated.
+      # - src: some/directory/
+      #   dst: /etc
+
+      # # This will replicate the directory structure under some/directory at
+      # # /etc, using the "tree" type.
+      # #
+      # # Templates: allowed.
+      # - src: some/directory/
+      #   dst: /etc
+      #   type: tree
+      #   file_info:
+      #     # File mode.
+      #     mode: 0644
+      #     # Modification time.
+      #     #
+      #     # Templates: allowed (since v2.6).
+      #     # mtime: "{{.CommitDate}}"
+
+      #     # Owner name.
+      #     #
+      #     # Templates: allowed (since v2.6).
+      #     owner: notRoot
+
+      #     # Group name.
+      #     #
+      #     # Templates: allowed (since v2.6).
+      #     group: notRoot
+
+      # # Simple config file
+      # - src: path/to/foo.conf
+      #   dst: /etc/foo.conf
+      #   type: config
+
+      # # Simple symlink.
+      # # Corresponds to `ln -s /sbin/foo /usr/local/bin/foo`
+      # - src: /sbin/foo
+      #   dst: /usr/bin/foo
+      #   type: "symlink"
+
+      # # Corresponds to `%config(noreplace)` if the packager is rpm, otherwise it
+      # # is just a config file
+      # - src: path/to/local/bar.conf
+      #   dst: /etc/bar.conf
+      #   type: "config|noreplace"
+
+      # # The src and dst attributes also supports name templates
+      # - src: path/{{ .Os }}-{{ .Arch }}/bar.conf
+      #   dst: /etc/foo/bar-{{ .ProjectName }}.conf
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+  format: '{{ .SHA }}: {{ .Message }} ({{ with .AuthorUsername }}@{{ . }}{{ else }}{{ .AuthorName }} <{{ .AuthorEmail }}>{{ end }})'
+  groups:
+    - title: "🚀 Features"
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "🐞 Bug fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "💪 Performance improvements"
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: "📃 Documentation"
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: "🕶️ Styles"
+      regexp: '^.*?style(\([[:word:]]+\))??!?:.+$'
+      order: 4
+    - title: "⚒️ Refactor"
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 5
+    - title: "🧪 Tests"
+      regexp: '^.*?test(\([[:word:]]+\))??!?:.+$'
+      order: 6
+    - title: "💻 Chores"
+      regexp: '^.*?chore(\([[:word:]]+\))??!?:.+$'
+      order: 7
+    - title: "🔔 Others"
+      order: 999
+
+release:
+  footer: >-
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).

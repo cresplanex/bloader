@@ -1,0 +1,5 @@
+[app.init.success]
+other = "アプリケーションの初期化に成功しました"
+
+[Menu]
+other = "メニュー"

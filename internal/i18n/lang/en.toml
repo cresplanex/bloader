@@ -1,0 +1,5 @@
+[app.init.success]
+other = "Application initialized successfully"
+
+[Menu]
+other = "Menu"

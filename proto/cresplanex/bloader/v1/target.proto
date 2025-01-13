@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package cresplanex.bloader.v1;
+
+enum TargetType {
+    TARGET_TYPE_UNSPECIFIED = 0;
+    TARGET_TYPE_HTTP = 1;
+}
+
+message Target {
+    TargetType type = 1;
+    oneof target {
+        TargetHTTPData http = 2;
+    }
+}
+
+message TargetHTTPData {
+    string url = 1;
+}
