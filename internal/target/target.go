@@ -2,7 +2,7 @@
 package target
 
 import (
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
 	"github.com/cresplanex/bloader/internal/config"
 )

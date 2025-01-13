@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/cresplanex/bloader/internal/runner"

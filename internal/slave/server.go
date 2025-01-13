@@ -9,7 +9,7 @@ import (
 	"io"
 	"sync"
 
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 
@@ -28,6 +28,7 @@ type commandTermData struct {
 
 // Server represents the server for the worker node
 type Server struct {
+	pb.UnimplementedBloaderSlaveServiceServer
 	globalCtx   context.Context
 	mu          *sync.RWMutex
 	encryptCtr  encrypt.Container

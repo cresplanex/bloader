@@ -10,8 +10,7 @@ import (
 	"os"
 	"sync"
 
-	rpc "buf.build/gen/go/cresplanex/bloader/grpc/go/cresplanex/bloader/v1/bloaderv1grpc"
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -40,7 +39,7 @@ const (
 type ConnectionMapData struct {
 	ConnectionID    string
 	conn            *grpc.ClientConn
-	Cli             rpc.BloaderSlaveServiceClient
+	Cli             pb.BloaderSlaveServiceClient
 	ReqChan         <-chan *pb.ReceiveChanelConnectResponse
 	termChan        chan<- struct{}
 	ReceiveTermChan <-chan ReceiveTermType
@@ -136,7 +135,7 @@ func (c *ConnectionContainer) Connect(
 			return fmt.Errorf("failed to connect to slave: %w", err)
 		}
 
-		cli := rpc.NewBloaderSlaveServiceClient(conn)
+		cli := pb.NewBloaderSlaveServiceClient(conn)
 
 		conReq := &pb.ConnectRequest{
 			Environment: env,

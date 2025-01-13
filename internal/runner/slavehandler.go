@@ -6,8 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	rpc "buf.build/gen/go/cresplanex/bloader/grpc/go/cresplanex/bloader/v1/bloaderv1grpc"
-	pb "buf.build/gen/go/cresplanex/bloader/protocolbuffers/go/cresplanex/bloader/v1"
+	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/cresplanex/bloader/internal/logger"
@@ -18,7 +17,7 @@ type SlaveRequestHandler struct {
 	// resChan is a channel.
 	resChan <-chan *pb.ReceiveChanelConnectResponse
 	// cli is a client.
-	cli rpc.BloaderSlaveServiceClient
+	cli pb.BloaderSlaveServiceClient
 	// chunkSize is an integer.
 	chunkSize int
 	// receiveTermChan is a channel for receiving term.
@@ -33,7 +32,7 @@ const DefaultChunkSize = 1024
 // NewSlaveRequestHandler creates a new ResponseHandler.
 func NewSlaveRequestHandler(
 	resChan <-chan *pb.ReceiveChanelConnectResponse,
-	cli rpc.BloaderSlaveServiceClient,
+	cli pb.BloaderSlaveServiceClient,
 	termChan <-chan ReceiveTermType,
 ) *SlaveRequestHandler {
 	return &SlaveRequestHandler{
