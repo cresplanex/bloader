@@ -1,0 +1,111 @@
+# Options for analysis running.
+run:
+  # Timeout for analysis
+  timeout: 5m
+
+linters:
+  # Disable all linters.
+  disable-all: true
+  # Enable specific linter
+  enable:
+    # alter golint
+    - revive
+    # res.body close
+    - bodyclose
+    # Report when error return value is not acknowledged
+    - errorlint
+    # Check exhaustiveness of enum switch statements
+    - exhaustive
+    # Finds forced type assertions
+    - forcetypeassert
+    # Gofumpt checks whether code was gofumpt-ed
+    - gofumpt
+    # Goimports does everything that gofmt does. Additionally it checks unused imports
+    - goimports
+    # Inspects source code for security problems
+    - gosec
+    # It will give you some patterns of code that you don't need
+    - gosimple
+    # Checks that your code uses short syntax for if-statements whenever possible
+    - ineffassign
+    # Reports long lines
+    - lll
+    # Finds commonly misspelled English words in comments
+    - misspell
+    # Find code that shadows one of Go's predeclared identifiers
+    - predeclared
+    # Force them to write a reason when nolint
+    - nolintlint
+    # Checks that sql.Rows and sql.Stmt are closed
+    - sqlclosecheck
+    # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
+    - staticcheck
+    # Stylecheck is a replacement for golint
+    - stylecheck
+    # Check if compilation passes
+    - typecheck
+    # Reports unused function parameters
+    - unparam
+    # Report unused variables, constants, functions, types, etc
+    - unused
+    # Tool for detection of leading and trailing whitespace
+    - whitespace
+    # Checks that errors returned from external packages are wrapped
+    - wrapcheck
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  include:
+    - EXC0012
+    - EXC0013
+    - EXC0014
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - wrapcheck
+    - path: cmd/
+      linters:
+        - revive
+linters-settings:
+  gofumpt:
+    extra-rules: true
+  goimports:
+    local-prefixes: github.com/cresplanex/bloader
+  govet:
+    enable-all: true
+  revive:
+    rules:
+      # golint equivalent rules
+      # https://github.com/mgechev/revive#available-rules
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: if-return
+      - name: increment-decrement
+      - name: var-naming
+      - name: var-declaration
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+      - name: empty-block
+      - name: superfluous-else
+      - name: unused-parameter
+      - name: unreachable-code
+      - name: redefines-builtin-id
+      # Additional rules to be enabled
+      - name: use-any
+  stylecheck:
+    checks:
+      - all
+      - -ST1000

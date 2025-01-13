@@ -1,0 +1,169 @@
+name: Update CHANGELOG.md
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get tag details and commits
+        id: tag_details
+        run: |
+          echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          PREV_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF}^)
+          git log ${PREV_TAG}..HEAD --pretty=format:'%s (%an <%ae>) [%ci]' > commits.txt
+          echo "" >> commits.txt
+      - name: Update CHANGELOG.md
+        run: |
+          git checkout gh-pages
+
+          TEMP_FILE=$(mktemp)
+
+          echo "# Changelog" > $TEMP_FILE
+          echo "" >> $TEMP_FILE
+          echo "All notable changes to this project will be documented in this file." >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+          echo "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)," >> $TEMP_FILE
+          echo "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)." >> $TEMP_FILE
+          echo "" >> $TEMP_FILE
+
+          if [ ! -f CHANGELOG.md ]; then
+            CHANGELOG_BODY=""
+          else
+            TITLE_LINE_COUNT=7 # Number of lines in the title section
+            CHANGELOG_BODY=$(tail -n +"$((TITLE_LINE_COUNT + 1))" CHANGELOG.md)
+          fi
+
+          RELEASE_DATE=$(date +'%Y-%m-%d')
+          BODY_FILE=$(mktemp)
+          echo "## [${TAG_NAME}] - ${RELEASE_DATE}" > $BODY_FILE
+          echo "" >> $BODY_FILE
+          features=()
+          bug_fixes=()
+          performance_improvements=()
+          documentation=()
+          styles=()
+          refactors=()
+          tests=()
+          chores=()
+          others=()
+          while IFS= read -r line; do
+            if [[ $line =~ feat.* ]]; then
+              features+=("$line")
+            elif [[ $line =~ fix.* ]]; then
+              bug_fixes+=("$line")
+            elif [[ $line =~ perf.* ]]; then
+              performance_improvements+=("$line")
+            elif [[ $line =~ docs.* ]]; then
+              documentation+=("$line")
+            elif [[ $line =~ style.* ]]; then
+              styles+=("$line")
+            elif [[ $line =~ refactor.* ]]; then
+              refactors+=("$line")
+            elif [[ $line =~ test.* ]]; then
+              tests+=("$line")
+            elif [[ $line =~ chore.* ]]; then
+              chores+=("$line")
+            else
+              others+=("$line")
+            fi
+          done < commits.txt
+          if [ ${#features[@]} -gt 0 ]; then
+            echo "### 🚀 Features" >> $BODY_FILE
+            for feature in "${features[@]}"; do
+              formatted_feature=$(echo "$feature" | sed 's/^feat: //')
+              echo "✔️ $formatted_feature" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#bug_fixes[@]} -gt 0 ]; then
+            echo "### 🐞 Bug fixes" >> $BODY_FILE
+            for bug_fix in "${bug_fixes[@]}"; do
+              formatted_bug_fix=$(echo "$bug_fix" | sed 's/^fix: //')
+              echo "✔️ $formatted_bug_fix" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#performance_improvements[@]} -gt 0 ]; then
+            echo "### 💪 Performance improvements" >> $BODY_FILE
+            for performance_improvement in "${performance_improvements[@]}"; do
+              formatted_performance_improvement=$(echo "$performance_improvement" | sed 's/^perf: //')
+              echo "✔️ $formatted_performance_improvement" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#documentation[@]} -gt 0 ]; then
+            echo "### 📃 Documentation" >> $BODY_FILE
+            for doc in "${documentation[@]}"; do
+              formatted_doc=$(echo "$doc" | sed 's/^docs: //')
+              echo "✔️ $formatted_doc" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#styles[@]} -gt 0 ]; then
+            echo "### 🕶️ Styles" >> $BODY_FILE
+            for style in "${styles[@]}"; do
+              formatted_style=$(echo "$style" | sed 's/^style: //')
+              echo "✔️ $formatted_style" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#refactors[@]} -gt 0 ]; then
+            echo "### ⚒️ Refactor" >> $BODY_FILE
+            for refactor in "${refactors[@]}"; do
+              formatted_refactor=$(echo "$refactor" | sed 's/^refactor: //')
+              echo "✔️ $formatted_refactor" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#tests[@]} -gt 0 ]; then
+            echo "### 🧪 Tests" >> $BODY_FILE
+            for test in "${tests[@]}"; do
+              formatted_test=$(echo "$test" | sed 's/^test: //')
+              echo "✔️ $formatted_test" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#chores[@]} -gt 0 ]; then
+            echo "### 💻 Chores" >> $BODY_FILE
+            for chore in "${chores[@]}"; do
+              formatted_chore=$(echo "$chore" | sed 's/^chore: //')
+              echo "✔️ $formatted_chore" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          if [ ${#others[@]} -gt 0 ]; then
+            echo "### 🔔 Others" >> $BODY_FILE
+            for other in "${others[@]}"; do
+              echo "✔️ $other" >> $BODY_FILE
+              echo "" >> $BODY_FILE
+            done
+            echo "" >> $BODY_FILE
+          fi
+          echo "$CHANGELOG_BODY" >> $BODY_FILE
+          cat $TEMP_FILE $BODY_FILE > CHANGELOG.md
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "Update CHANGELOG.md for ${TAG_NAME}" || echo "No changes to commit"
+          git push origin gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
