@@ -3,6 +3,10 @@ package config
 import "fmt"
 
 var (
+	// ErrVersionRequired is the error for the required version.
+	ErrVersionRequired = fmt.Errorf("version is required")
+	// ErrVersionInvalid is the error for the invalid version.
+	ErrVersionInvalid = fmt.Errorf("version is invalid")
 	// ErrTypeInvalid is the error for the invalid config type.
 	ErrTypeInvalid = fmt.Errorf("config type is invalid")
 	// ErrTypeRequired is the error for the required config type.
