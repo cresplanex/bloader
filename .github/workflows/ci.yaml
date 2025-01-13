@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+      - 'releases/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'releases/**'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  lint:
+    name: Lint go files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: Download go modules
+        run: go mod download
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: ./...
+  test:
+    name: Test go files
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: write
+      pull-requests: write
+    env:
+      GOTESTSUM_BIN: "${{ github.workspace }}/.tmp/gotestsum/bin"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: Cache gotestsum
+        id: gotestsum-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.GOTESTSUM_BIN}}
+          key: ${{ runner.os }}-go-gotestsum
+      - name: Install gotestsum
+        if: ${{ steps.gotestsum-cache.outputs.cache-hit != 'true' }}
+        run: GOBIN="${{ env.GOTESTSUM_BIN }}" go install gotest.tools/gotestsum@latest
+      - name: Run tests and generate JUnit report, test coverage
+        run: "${{ env.GOTESTSUM_BIN }}/gotestsum --junitfile report.xml --format testdox --  -cover -coverprofile=coverage.out ./..."
+      - name: Upload test report and coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-report-and-coverage
+          path: |
+            report.xml
+            coverage.out
+      - name: Test Report Summary
+        if: success() || failure()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Tests
+          path: "*.xml"
+          reporter: java-junit
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          fail_ci_if_error: true
+          slug: cresplanex/bloader
+          token: ${{ secrets.CODECOV_TOKEN }}
