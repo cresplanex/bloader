@@ -6,197 +6,190 @@ import "cresplanex/bloader/v1/auth.proto";
 import "cresplanex/bloader/v1/target.proto";
 
 service BloaderSlaveService {
-    rpc Connect(ConnectRequest) returns (ConnectResponse);
+  rpc Connect(ConnectRequest) returns (ConnectResponse);
 
-    rpc Disconnect(DisconnectRequest) returns (DisconnectResponse);
+  rpc Disconnect(DisconnectRequest) returns (DisconnectResponse);
 
-    rpc SlaveCommand(SlaveCommandRequest) returns (SlaveCommandResponse);
+  rpc SlaveCommand(SlaveCommandRequest) returns (SlaveCommandResponse);
 
-    rpc SlaveCommandDefaultStore(stream SlaveCommandDefaultStoreRequest) returns (SlaveCommandDefaultStoreResponse);
+  rpc SlaveCommandDefaultStore(stream SlaveCommandDefaultStoreRequest) returns (SlaveCommandDefaultStoreResponse);
 
-    rpc CallExec(CallExecRequest) returns (stream CallExecResponse);
+  rpc CallExec(CallExecRequest) returns (stream CallExecResponse);
 
-    rpc ReceiveChanelConnect(ReceiveChanelConnectRequest) returns (stream ReceiveChanelConnectResponse);
+  rpc ReceiveChanelConnect(ReceiveChanelConnectRequest) returns (stream ReceiveChanelConnectResponse);
 
-    rpc SendLoader(stream SendLoaderRequest) returns (SendLoaderResponse);
+  rpc SendLoader(stream SendLoaderRequest) returns (SendLoaderResponse);
 
-    rpc SendAuth(SendAuthRequest) returns (SendAuthResponse);
+  rpc SendAuth(SendAuthRequest) returns (SendAuthResponse);
 
-    rpc SendStoreData(stream SendStoreDataRequest) returns (SendStoreDataResponse);
+  rpc SendStoreData(stream SendStoreDataRequest) returns (SendStoreDataResponse);
 
-    rpc SendStoreOk(SendStoreOkRequest) returns (SendStoreOkResponse);
+  rpc SendStoreOk(SendStoreOkRequest) returns (SendStoreOkResponse);
 
-    rpc SendTarget(SendTargetRequest) returns (SendTargetResponse);
+  rpc SendTarget(SendTargetRequest) returns (SendTargetResponse);
 
-    rpc ReceiveLoadTermChannel(ReceiveLoadTermChannelRequest) returns (ReceiveLoadTermChannelResponse);
+  rpc ReceiveLoadTermChannel(ReceiveLoadTermChannelRequest) returns (ReceiveLoadTermChannelResponse);
 }
 
 message ConnectRequest {
-    string environment = 1;
+  string environment = 1;
 }
 
 message ConnectResponse {
-    string connection_id = 1;
+  string connection_id = 1;
 }
 
 message DisconnectRequest {
-    string connection_id = 1;
+  string connection_id = 1;
 }
 
-message DisconnectResponse {
-}
+message DisconnectResponse {}
 
 message SlaveCommandRequest {
-    string connection_id = 1;
-    string loader_id = 2;
-    string output_root = 3;
+  string connection_id = 1;
+  string loader_id = 2;
+  string output_root = 3;
 }
 
 message SlaveCommandResponse {
-    string command_id = 1;
+  string command_id = 1;
 }
 
 enum SlaveCommandDefaultStoreType {
-    SLAVE_COMMAND_DEFAULT_STORE_TYPE_UNSPECIFIED = 0;
-    SLAVE_COMMAND_DEFAULT_STORE_TYPE_STORE = 1;
-    SLAVE_COMMAND_DEFAULT_STORE_TYPE_THREAD_ONLY_STORE = 2;
-    SLAVE_COMMAND_DEFAULT_STORE_TYPE_SLAVE_VALUES = 3;
+  SLAVE_COMMAND_DEFAULT_STORE_TYPE_UNSPECIFIED = 0;
+  SLAVE_COMMAND_DEFAULT_STORE_TYPE_STORE = 1;
+  SLAVE_COMMAND_DEFAULT_STORE_TYPE_THREAD_ONLY_STORE = 2;
+  SLAVE_COMMAND_DEFAULT_STORE_TYPE_SLAVE_VALUES = 3;
 }
 
 message SlaveCommandDefaultStoreRequest {
-    string connection_id = 1;
-    string command_id = 2;
-    SlaveCommandDefaultStoreType store_type = 3;
-    bytes default_store = 4;
-    bool is_last_chunk = 5;
+  string connection_id = 1;
+  string command_id = 2;
+  SlaveCommandDefaultStoreType store_type = 3;
+  bytes default_store = 4;
+  bool is_last_chunk = 5;
 }
 
-message SlaveCommandDefaultStoreResponse {
-}
+message SlaveCommandDefaultStoreResponse {}
 
 message CallExecRequest {
-    string connection_id = 1;
-    string command_id = 2;
+  string connection_id = 1;
+  string command_id = 2;
 }
 
 message CallExecResponse {
-    string output_id = 1;
-    CallExecOutputType output_type = 2;
-    string output_root = 3;
-    oneof output {
-        CallExecOutputHTTP output_http = 4;
-    }
+  string output_id = 1;
+  CallExecOutputType output_type = 2;
+  string output_root = 3;
+  oneof output {
+    CallExecOutputHTTP output_http = 4;
+  }
 }
 
 enum CallExecOutputType {
-    CALL_EXEC_OUTPUT_TYPE_UNSPECIFIED = 0;
-    CALL_EXEC_OUTPUT_TYPE_HTTP = 1;
+  CALL_EXEC_OUTPUT_TYPE_UNSPECIFIED = 0;
+  CALL_EXEC_OUTPUT_TYPE_HTTP = 1;
 }
 
 message CallExecOutputHTTP {
-    repeated string data = 1;
+  repeated string data = 1;
 }
 
 message ReceiveChanelConnectRequest {
-    string connection_id = 1;
+  string connection_id = 1;
 }
 
 message ReceiveChanelConnectResponse {
-    string request_id = 1;
-    RequestType request_type = 2;
-    oneof request {
-        ReceiveChanelConnectLoaderResourceRequest loader_resource_request = 3;
-        ReceiveChanelConnectAuthResourceRequest auth_resource_request = 4;
-        ReceiveChanelConnectStore store = 5;
-        ReceiveChanelConnectStoreResourceRequest store_resource_request = 6;
-        ReceiveChanelConnectTargetResourceRequest target_resource_request = 7;
-    }
+  string request_id = 1;
+  RequestType request_type = 2;
+  oneof request {
+    ReceiveChanelConnectLoaderResourceRequest loader_resource_request = 3;
+    ReceiveChanelConnectAuthResourceRequest auth_resource_request = 4;
+    ReceiveChanelConnectStore store = 5;
+    ReceiveChanelConnectStoreResourceRequest store_resource_request = 6;
+    ReceiveChanelConnectTargetResourceRequest target_resource_request = 7;
+  }
 }
 
 enum RequestType {
-    REQUEST_TYPE_UNSPECIFIED = 0;
-    REQUEST_TYPE_REQUEST_RESOURCE_LOADER = 1;
-    REQUEST_TYPE_REQUEST_RESOURCE_AUTH = 2;
-    REQUEST_TYPE_STORE = 3;
-    REQUEST_TYPE_REQUEST_RESOURCE_STORE = 4;
-    REQUEST_TYPE_REQUEST_RESOURCE_TARGET = 5;
+  REQUEST_TYPE_UNSPECIFIED = 0;
+  REQUEST_TYPE_REQUEST_RESOURCE_LOADER = 1;
+  REQUEST_TYPE_REQUEST_RESOURCE_AUTH = 2;
+  REQUEST_TYPE_STORE = 3;
+  REQUEST_TYPE_REQUEST_RESOURCE_STORE = 4;
+  REQUEST_TYPE_REQUEST_RESOURCE_TARGET = 5;
 }
 
 message ReceiveChanelConnectLoaderResourceRequest {
-    string loader_id = 1;
+  string loader_id = 1;
 }
 
 message ReceiveChanelConnectAuthResourceRequest {
-    string auth_id = 1;
-    bool is_default = 2;
+  string auth_id = 1;
+  bool is_default = 2;
 }
 
 message ReceiveChanelConnectStore {
-    string uid = 1;
-    bytes data = 2;
-    bool is_last_chunk = 3;
+  string uid = 1;
+  bytes data = 2;
+  bool is_last_chunk = 3;
 }
 
 message ReceiveChanelConnectStoreResourceRequest {
-    string uid = 1;
-    bytes data = 2;
-    bool is_last_chunk = 3;
+  string uid = 1;
+  bytes data = 2;
+  bool is_last_chunk = 3;
 }
 
 message ReceiveChanelConnectTargetResourceRequest {
-    string target_id = 1;
+  string target_id = 1;
 }
 
 message SendLoaderRequest {
-    string request_id = 1;
-    string loader_id = 2;
-    bytes content = 3;      
-    bool is_last_chunk = 4; 
+  string request_id = 1;
+  string loader_id = 2;
+  bytes content = 3;
+  bool is_last_chunk = 4;
 }
 
-message SendLoaderResponse {
-}
+message SendLoaderResponse {}
 
 message SendAuthRequest {
-    string request_id = 1;
-    string auth_id = 2;
-    Auth auth = 3;
-    bool is_default = 4;
+  string request_id = 1;
+  string auth_id = 2;
+  Auth auth = 3;
+  bool is_default = 4;
 }
 
-message SendAuthResponse {
-}
+message SendAuthResponse {}
 
 message SendStoreDataRequest {
-    string request_id = 1;
-    bytes data = 2;
-    bool is_last_chunk = 3;
+  string request_id = 1;
+  bytes data = 2;
+  bool is_last_chunk = 3;
 }
 
-message SendStoreDataResponse {
-}
+message SendStoreDataResponse {}
 
 message SendStoreOkRequest {
-    string request_id = 1;
+  string request_id = 1;
 }
 
-message SendStoreOkResponse {
-}
+message SendStoreOkResponse {}
 
 message SendTargetRequest {
-    string request_id = 1;
-    string target_id = 2;
-    Target target = 3;
+  string request_id = 1;
+  string target_id = 2;
+  Target target = 3;
 }
 
-message SendTargetResponse {
-}
+message SendTargetResponse {}
 
 message ReceiveLoadTermChannelRequest {
-    string connection_id = 1;
-    string command_id = 2;
+  string connection_id = 1;
+  string command_id = 2;
 }
 
 message ReceiveLoadTermChannelResponse {
-    bool success = 1;
+  bool success = 1;
 }
