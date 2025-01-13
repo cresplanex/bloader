@@ -1,15 +1,39 @@
-# Bloader: A Modern Benchmarking Tool
-
-[![Go Reference](https://pkg.go.dev/badge/github.com/cresplanex/bloader.svg)](https://pkg.go.dev/github.com/cresplanex/bloader)
-[![CI](https://github.com/cresplanex/bloader/actions/workflows/ci.yaml/badge.svg)](https://github.com/cresplanex/bloader/actions/workflows/ci.yaml)
-[![Test Coverage](https://codecov.io/gh/cresplanex/bloader/branch/main/graph/badge.svg)](https://codecov.io/gh/cresplanex/bloader)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cresplanex/bloader)](https://goreportcard.com/report/github.com/cresplanex/bloader)
-[![License](https://img.shields.io/github/license/cresplanex/bloader)](https://github.com/cresplanex/bloader/blob/main/LICENSE)
-[![Release](https://img.shields.io/github/v/release/cresplanex/bloader.svg)](https://github.com/cresplanex/bloader/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/cresplanex/bloader.svg)](https://github.com/cresplanex/bloader/commits/main)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/cresplanex/bloader.svg)](https://golang.org/doc/devel/release.html)
-
-Bloader is a cutting-edge load testing tool designed for simplicity and flexibility. While still in active development, it already offers robust features to execute and manage load tests effectively. We welcome contributions from the community to help shape its future. 💡
+<h1 align="center">
+  <a href="https://docs.bloader.cresplanex.org">
+    <picture>
+      <source height="125" media="(prefers-color-scheme: dark)" srcset="docs/static/bloader_logo.png">
+      <img height="125" alt="Bloader" src="docs/static/bloader_logo.png">
+    </picture>
+  </a>
+  <br>
+  <a href="https://pkg.go.dev/github.com/cresplanex/bloader">
+    <img src="https://pkg.go.dev/badge/github.com/cresplanex/bloader.svg" alt="Go Reference">
+  </a>
+  <a href="https://github.com/cresplanex/bloader/actions/workflows/ci.yaml">
+    <img src="https://github.com/cresplanex/bloader/actions/workflows/ci.yaml/badge.svg" alt="CI">
+  </a>
+  <a href="https://codecov.io/gh/cresplanex/bloader">
+    <img src="https://codecov.io/gh/cresplanex/bloader/branch/main/graph/badge.svg" alt="Test Coverage">
+  </a>
+  <a href="https://goreportcard.com/report/github.com/cresplanex/bloader">
+    <img src="https://goreportcard.com/badge/github.com/cresplanex/bloader" alt="Go Report Card">
+  </a>
+  <a href="https://github.com/cresplanex/bloader/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/cresplanex/bloader" alt="License">
+  </a>
+  <a href="https://github.com/cresplanex/bloader/releases">
+    <img src="https://img.shields.io/github/v/release/cresplanex/bloader.svg" alt="Release">
+  </a>
+  <a href="https://github.com/cresplanex/bloader/commits/main">
+    <img src="https://img.shields.io/github/last-commit/cresplanex/bloader.svg" alt="Last Commit">
+  </a>
+  <a href="https://golang.org/doc/devel/release.html">
+    <img src="https://img.shields.io/github/go-mod/go-version/cresplanex/bloader.svg" alt="Go Version">
+  </a>
+</h1>
+<p align="center">
+  <em>Bloader is a cutting-edge load testing tool designed for <b>simplicity</b> and <b>flexibility</b>. While still in active development, it already offers robust features to execute and manage load tests effectively. We welcome contributions from the community to help shape its future. 💡</em>
+</p>
 
 ---
 
