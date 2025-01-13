@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package cresplanex.bloader.v1;
 
+option go_package = "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1";
+
 import "cresplanex/bloader/v1/encrypt.proto";
 
 message StoreDataList {

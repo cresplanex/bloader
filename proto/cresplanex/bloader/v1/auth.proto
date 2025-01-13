@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package cresplanex.bloader.v1;
 
+option go_package = "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1";
+
 enum AuthType {
   AUTH_TYPE_UNSPECIFIED = 0;
   AUTH_TYPE_OAUTH2 = 1;
