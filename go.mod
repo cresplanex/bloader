@@ -14,7 +14,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nicksnyder/go-i18n/v2 v2.4.1
-	github.com/samber/slog-multi v1.2.4
+	github.com/samber/slog-multi v1.3.3
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/exp v0.0.0-20241210194714-1829a127f884
