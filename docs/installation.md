@@ -76,7 +76,7 @@ Download the appropriate archive file for your environment from the [GitHub Rele
 
 Use `Invoke-WebRequest` to download the `.zip` file:
 ``` powershell
-Invoke-WebRequest -Uri "https://github.com/ablankz/bloader/releases/download/v$env:VERSION/bloader_$env:VERSION_Windows_$env:ARCH.zip" -OutFile bloader.zip
+Invoke-WebRequest -Uri "https://github.com/cresplanex/bloader/releases/download/v$env:VERSION/bloader_$env:VERSION_Windows_$env:ARCH.zip" -OutFile bloader.zip
 ```
 
 ### Extract the Archive
