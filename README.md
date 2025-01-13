@@ -1,10 +1,11 @@
 <h1 align="center">
-  <a href="https://docs.bloader.cresplanex.org" style="display: inline-block; margin-bottom: 16px;">
+  <a href="https://docs.bloader.cresplanex.org">
     <picture>
       <source height="125" media="(prefers-color-scheme: dark)" srcset="docs/static/bloader_logo.png">
       <img height="125" alt="Bloader" src="docs/static/bloader_logo.png">
     </picture>
   </a>
+  <br>
   <br>
   <a href="https://pkg.go.dev/github.com/cresplanex/bloader">
     <img src="https://pkg.go.dev/badge/github.com/cresplanex/bloader.svg" alt="Go Reference">
