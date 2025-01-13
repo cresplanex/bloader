@@ -3,15 +3,12 @@ name: CI
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
-      - develop
-      - 'releases/**'
+    branches-ignore:
+      - gh-pages
   pull_request:
-    branches:
+    branches-ignore:
       - main
-      - develop
-      - 'releases/**'
+      - gh-pages
 
 defaults:
   run:
