@@ -8,6 +8,7 @@ Pull Requests (PRs) are the lifeblood of open source. Here’s how to create a g
 - [ ] Import formatting has been applied using `goimports -local github.com/cresplanex/bloader`.
 - [ ] Linting has been performed using `golangci-lint run`.
 - [ ] Tests have been executed with `gotestsum` and all pass.
+- [ ] The proto formatting is done and there is no destructive detection (if applicable).
 - [ ] Documentation has been updated (if applicable).
 - [ ] CI checks pass successfully.
 
@@ -29,6 +30,7 @@ Explain how you verified your changes.
 - [ ] I have run `goimports -local github.com/cresplanex/bloader`.
 - [ ] I have run `golangci-lint`.
 - [ ] I have tested the code with `gotestsum`.
+- [ ] I have check `lint`, `format`, and `breaking` on proto buffer.
 - [ ] I have updated documentation if necessary.
 ```
 

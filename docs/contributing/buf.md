@@ -16,21 +16,26 @@ Working with gRPC definitions between master and slave? Here’s how to properly
 
 Before committing your changes, follow these steps:
 
-1. **Format Your `.proto` Files**:
+1. **Lint Your `.proto` Files**:
+   ```bash
+   buf lint
+   ```
+
+2. **Format Your `.proto` Files**:
    ```bash
    buf format -w
    ```
 
-2. **Check for Breaking Changes**:
+3. **Check for Breaking Changes**:
    Run the following command to detect breaking changes against the branch you're working on:
    ```bash
    buf breaking proto --against '.git#subdir=proto'
    ```
 
-3. **Accidental Commit? No Problem!**  
+4. **Accidental Commit? No Problem!**  
    If you committed without running the checks, refer to the [Buf Breaking Changes Overview](https://buf.build/docs/breaking/overview/) to identify issues against the base branch.
 
-4. **Local Checks Are Recommended**:  
+5. **Local Checks Are Recommended**:  
    While these checks are performed in the CI workflow, running them locally helps catch issues earlier.
 
 ---

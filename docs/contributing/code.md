@@ -10,7 +10,8 @@ Want to dive into the codebase? Follow these steps to ensure your contributions 
 5. **Import Format Your Code**: Use `goimports -local github.com/cresplanex/bloader` to ensure consistent import formatting (details below).
 6. **Lint Your Code**: Run `golangci-lint` to catch potential issues (details below).
 7. **Test Your Code**: Use `gotestsum` to run tests and ensure everything passes (details below).
-8. **Submit a Pull Request**: Follow the [Pull Request Guide](pull_request.md) to submit your changes.
+8. **Check Proto Buffer**: Follow [Buf Usage Guide](buf.md) to change the proto.
+9. **Submit a Pull Request**: Follow the [Pull Request Guide](pull_request.md) to submit your changes.
 
 ---
 

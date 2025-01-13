@@ -45,6 +45,7 @@ gotestsum --format=short-verbose
 
 ## 🐢 Pro Tip
 - Use `gofumpt`, `goimports`and `golangci-lint` integrations in your editor for a smooth workflow.
+- If you also want to make changes to the `proto`, consider introducing [bufCLI](buf.md) commands into the editor integration flow.
 - Use Docker if you need to test integrations or other advanced features.
 
 You're all set! 🚀
