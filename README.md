@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="https://docs.bloader.cresplanex.org">
+  <a href="https://docs.bloader.cresplanex.org" style="display: inline-block; margin-bottom: 16px;">
     <picture>
       <source height="125" media="(prefers-color-scheme: dark)" srcset="docs/static/bloader_logo.png">
       <img height="125" alt="Bloader" src="docs/static/bloader_logo.png">
