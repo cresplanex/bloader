@@ -58,7 +58,6 @@ func init() {
 }
 
 func initConfig() {
-
 	if shouldSkipConfig() {
 		return
 	}
