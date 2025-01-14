@@ -331,7 +331,7 @@ func (e BaseExecutor) Execute(
 			}
 			return fmt.Errorf("failed to connect to slave: %w", err)
 		}
-		atomicErr := atomic.Value{}
+		var atomicErr atomic.Pointer[syncError]
 		var wg sync.WaitGroup
 		for _, slave := range validSlaveConnect.Slaves {
 			wg.Add(1)
@@ -350,7 +350,7 @@ func (e BaseExecutor) Execute(
 					e.TargetFactor,
 					e.Store,
 				); err != nil {
-					atomicErr.Store(err)
+					atomicErr.Store(&syncError{Err: err})
 					e.Logger.Error(ctx, "failed to handle response: %v",
 						logger.Value("error", err))
 					cancel()
@@ -359,15 +359,10 @@ func (e BaseExecutor) Execute(
 			}(slHandler)
 		}
 		wg.Wait()
-		if err := atomicErr.Load(); err != nil {
-			if err, ok := err.(error); ok {
-				e.Logger.Error(ctx, "failed to find error",
-					logger.Value("error", err), logger.Value("on", "Flow"))
-				return err
-			}
-			e.Logger.Error(ctx, "failed to find unknown error",
-				logger.Value("on", "Flow"))
-			return fmt.Errorf("failed to find unknown error")
+		if syncErr := atomicErr.Load(); syncErr != nil {
+			e.Logger.Error(ctx, "failed to find error",
+				logger.Value("error", syncErr.Err), logger.Value("on", "Execute"))
+			return syncErr.Err
 		}
 		e.Logger.Info(ctx, "connected to slave node")
 	case RunnerKindFlow:

@@ -678,7 +678,7 @@ func run(
 			}
 		}
 	} else {
-		atomicErr := atomic.Value{}
+		var atomicErr atomic.Pointer[syncError]
 		var wg sync.WaitGroup
 		sem := make(chan struct{}, concurrency)
 		for i, executor := range executors {
@@ -697,7 +697,7 @@ func run(
 					if err := preExecutor.castFunc(ctx); err != nil {
 						log.Error(ctx, fmt.Sprintf("failed to cast[%d]", i),
 							logger.Value("error", err), logger.Value("on", "Flow"))
-						atomicErr.Store(err)
+						atomicErr.Store(&syncError{Err: err})
 						cancel()
 					}
 				}()
@@ -729,7 +729,8 @@ func run(
 						NewDefaultEventCasterWithBroadcaster(preExecutor.eventCaster),
 					)
 					if err != nil {
-						atomicErr.Store(err)
+						fmt.Printf("type file failed to execute flow[%d], %v(type: %T)\n", i, err, err)
+						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
 							logger.Value("error", err), logger.Value("on", "Flow"))
 						cancel()
@@ -746,7 +747,8 @@ func run(
 						flows[i],
 					)
 					if err != nil {
-						atomicErr.Store(err)
+						fmt.Printf("type slCmd failed to execute flow[%d], %v(type: %T)\n", i, err, err)
+						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
 							logger.Value("error", err), logger.Value("on", "Flow"))
 						cancel()
@@ -773,7 +775,8 @@ func run(
 						broadCastMap,
 					)
 					if err != nil {
-						atomicErr.Store(err)
+						fmt.Printf("type flow failed to execute flow[%d], %v(type: %T)\n", i, err, err)
+						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
 							logger.Value("error", err), logger.Value("on", "Flow"))
 						cancel()
@@ -791,15 +794,10 @@ func run(
 
 		close(sem)
 
-		if err := atomicErr.Load(); err != nil {
-			if e, ok := err.(error); ok {
-				log.Error(ctx, "failed to find error",
-					logger.Value("error", e), logger.Value("on", "Flow"))
-				return e
-			}
-			log.Error(ctx, "failed to find unknown error",
-				logger.Value("on", "Flow"))
-			return fmt.Errorf("failed to find unknown error")
+		if syncErr := atomicErr.Load(); syncErr != nil {
+			log.Error(ctx, "failed to find error",
+				logger.Value("error", syncErr.Err), logger.Value("on", "Flow"))
+			return syncErr.Err
 		}
 
 		return nil
@@ -961,7 +959,7 @@ func slaveCmdRun(
 		}
 	}
 
-	atomicErr := atomic.Value{}
+	var atomicErr atomic.Pointer[syncError]
 	var wg sync.WaitGroup
 	for i, executor := range slaveExecutors {
 		wg.Add(1)
@@ -971,7 +969,7 @@ func slaveCmdRun(
 
 			err := preExecutor.exec(ctx, log)
 			if err != nil {
-				atomicErr.Store(err)
+				atomicErr.Store(&syncError{Err: err})
 				log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
 					logger.Value("error", err), logger.Value("on", "Flow"))
 				return
@@ -981,15 +979,10 @@ func slaveCmdRun(
 
 	wg.Wait()
 
-	if err := atomicErr.Load(); err != nil {
-		if e, ok := err.(error); ok {
-			log.Error(ctx, "failed to find error",
-				logger.Value("error", e), logger.Value("on", "Flow"))
-			return e
-		}
-		log.Error(ctx, "failed to find unknown error",
-			logger.Value("on", "Flow"))
-		return fmt.Errorf("failed to find unknown error")
+	if syncErr := atomicErr.Load(); syncErr != nil {
+		log.Error(ctx, "failed to find error",
+			logger.Value("error", syncErr.Err), logger.Value("on", "slaveCmdRun"))
+		return syncErr.Err
 	}
 
 	return nil
