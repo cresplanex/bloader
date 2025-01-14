@@ -13,6 +13,7 @@ Here’s how you can get started:
 - [Setting Up Your Environment](setup.md)
 - [Style Guide](style_guide.md)
 - [Buf Usage Guide](buf.md)
+- [Task Automation](automation.md)
 
 ## 🛠️ Ready to start?
 Jump into one of the guides above and let’s build something awesome together! 🚀
