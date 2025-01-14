@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	slogmulti "github.com/samber/slog-multi"
 
@@ -128,6 +129,14 @@ func createArgs(args ...KeyVal) []any {
 	for _, arg := range attrs {
 		anyKeyVals = append(anyKeyVals, arg.Key, arg.Value)
 	}
+
+	pc, file, line, _ := runtime.Caller(2)
+	function := runtime.FuncForPC(pc).Name()
+
+	anyKeyVals = append(anyKeyVals, "file", slog.StringValue(file))
+	anyKeyVals = append(anyKeyVals, "line", slog.IntValue(line))
+	anyKeyVals = append(anyKeyVals, "function", slog.StringValue(function))
+
 	return anyKeyVals
 }
 

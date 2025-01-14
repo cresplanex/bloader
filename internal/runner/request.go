@@ -141,7 +141,7 @@ func (r HTTPRequest) CreateRequest(ctx context.Context, log logger.Logger, count
 	}
 	fullURL.RawQuery = queryParams.Encode()
 	log.Debug(ctx, "GET request to file objects endpoint URL created",
-		logger.Value("url", fullURL.String()), logger.Value("on", "GetFileObjectsReq.CreateRequest"))
+		logger.Value("url", fullURL.String()))
 
 	var body io.Reader
 	header := http.Header{}

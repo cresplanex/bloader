@@ -361,7 +361,7 @@ func (e BaseExecutor) Execute(
 		wg.Wait()
 		if syncErr := atomicErr.Load(); syncErr != nil {
 			e.Logger.Error(ctx, "failed to find error",
-				logger.Value("error", syncErr.Err), logger.Value("on", "Execute"))
+				logger.Value("error", syncErr.Err))
 			return syncErr.Err
 		}
 		e.Logger.Info(ctx, "connected to slave node")

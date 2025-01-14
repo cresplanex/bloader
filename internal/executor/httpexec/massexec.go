@@ -110,7 +110,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					}
 
 					log.Debug(ctx, "sending request",
-						logger.Value("on", "RequestContent.QueryExecute"),
+
 						logger.Value("url", req.URL),
 						logger.Value("count", countInternal),
 					)
@@ -118,17 +118,17 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					resp, err := client.Do(req)
 					endTime := time.Now()
 					log.Debug(ctx, "received response",
-						logger.Value("on", "RequestContent.QueryExecute"),
+
 						logger.Value("url", req.URL),
 						logger.Value("count", countInternal),
 					)
 					if err != nil {
 						log.Error(ctx, "response error",
-							logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+							logger.Value("error", err), logger.Value("url", req.URL))
 						select {
 						case <-ctx.Done():
 							log.Info(ctx, "request processing is interrupted due to context termination",
-								logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+								logger.Value("url", req.URL))
 							return
 						case q.ResChan <- ResponseContent{
 							Success:        false,
@@ -157,11 +157,11 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					responseByte, err := io.ReadAll(resp.Body)
 					if err != nil {
 						log.Error(ctx, "failed to read response",
-							logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+							logger.Value("error", err), logger.Value("url", req.URL))
 						select {
 						case <-ctx.Done():
 							log.Info(ctx, "request processing is interrupted due to context termination",
-								logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+								logger.Value("url", req.URL))
 							return
 						case q.ResChan <- ResponseContent{
 							Success:        false,
@@ -202,11 +202,11 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					}
 					if err != nil {
 						log.Error(ctx, "failed to parse response",
-							logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+							logger.Value("error", err), logger.Value("url", req.URL))
 						select {
 						case <-ctx.Done():
 							log.Info(ctx, "request processing is interrupted due to context termination",
-								logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+								logger.Value("url", req.URL))
 							return
 						case q.ResChan <- ResponseContent{
 							Success:        false,
@@ -234,7 +234,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					}
 
 					log.Debug(ctx, "response OK",
-						logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+						logger.Value("url", req.URL))
 					responseContent := ResponseContent{
 						Success:        true,
 						ByteResponse:   responseByte,
@@ -250,7 +250,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					case q.ResChan <- responseContent:
 					case <-ctx.Done():
 						log.Info(ctx, "request processing is interrupted due to context termination",
-							logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+							logger.Value("url", req.URL))
 						return
 					}
 				}(count, countLimitOver)

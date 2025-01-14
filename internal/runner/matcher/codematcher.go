@@ -220,7 +220,7 @@ func (scc StatusCodeCondition) MatcherGenerate(
 		}, nil
 	default:
 		log.Error(ctx, "unknown operator",
-			logger.Value("operator", scc.Op), logger.Value("on", "statusCodeMatherFactory"))
+			logger.Value("operator", scc.Op))
 		return nil, fmt.Errorf("unknown operator: %s", *scc.Op)
 	}
 }

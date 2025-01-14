@@ -39,8 +39,7 @@ func (bc BodyCondition) MatcherGenerate(ctx context.Context, log logger.Logger) 
 				match = true
 			}
 		} else {
-			log.Warn(ctx, "The result of the jmespath query is not a boolean",
-				logger.Value("on", "runResponseHandler"))
+			log.Warn(ctx, "The result of the jmespath query is not a boolean")
 		}
 		return match, nil
 	}, nil

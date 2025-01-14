@@ -450,7 +450,7 @@ func (f *ValidFlow) Run(
 		for _, c := range cl {
 			if err := c(); err != nil {
 				log.Error(ctx, "failed to close",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 			}
 		}
 	}()
@@ -593,7 +593,7 @@ func run(
 		for i, executor := range executors {
 			if err := executor.waitFunc(ctx); err != nil {
 				log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to wait: %w", err)
 			}
 			switch executor.flowType {
@@ -622,7 +622,7 @@ func run(
 				)
 				if err != nil {
 					log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 					return fmt.Errorf("failed to execute flow: %w", err)
 				}
 			case FlowStepFlowTypeSlaveCmd:
@@ -637,11 +637,10 @@ func run(
 				)
 				if err != nil {
 					log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 					return fmt.Errorf("failed to execute flow: %w", err)
 				}
-				log.Debug(ctx, "flow finished",
-					logger.Value("on", "Flow"))
+				log.Debug(ctx, "flow finished")
 			case FlowStepFlowTypeFlow:
 				err := run(
 					ctx,
@@ -664,16 +663,15 @@ func run(
 				)
 				if err != nil {
 					log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 					return fmt.Errorf("failed to execute flow: %w", err)
 				}
-				log.Debug(ctx, "flow finished",
-					logger.Value("on", "Flow"))
+				log.Debug(ctx, "flow finished")
 			}
 
 			if err := executor.castFunc(ctx); err != nil {
 				log.Error(ctx, fmt.Sprintf("failed to cast[%d]", i),
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to cast: %w", err)
 			}
 		}
@@ -684,7 +682,7 @@ func run(
 		for i, executor := range executors {
 			if err := executor.waitFunc(ctx); err != nil {
 				log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to wait: %w", err)
 			}
 
@@ -696,7 +694,7 @@ func run(
 				defer func() {
 					if err := preExecutor.castFunc(ctx); err != nil {
 						log.Error(ctx, fmt.Sprintf("failed to cast[%d]", i),
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 						atomicErr.Store(&syncError{Err: err})
 						cancel()
 					}
@@ -732,7 +730,7 @@ func run(
 						fmt.Printf("type file failed to execute flow[%d], %v(type: %T)\n", i, err, err)
 						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 						cancel()
 						return
 					}
@@ -750,7 +748,7 @@ func run(
 						fmt.Printf("type slCmd failed to execute flow[%d], %v(type: %T)\n", i, err, err)
 						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 						cancel()
 						return
 					}
@@ -778,13 +776,12 @@ func run(
 						fmt.Printf("type flow failed to execute flow[%d], %v(type: %T)\n", i, err, err)
 						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 						cancel()
 						return
 					}
 				}
-				log.Debug(ctx, "flow finished",
-					logger.Value("on", "Flow"))
+				log.Debug(ctx, "flow finished")
 
 				<-sem
 			}(executor)
@@ -796,7 +793,7 @@ func run(
 
 		if syncErr := atomicErr.Load(); syncErr != nil {
 			log.Error(ctx, "failed to find error",
-				logger.Value("error", syncErr.Err), logger.Value("on", "Flow"))
+				logger.Value("error", syncErr.Err))
 			return syncErr.Err
 		}
 
@@ -832,8 +829,7 @@ func slaveCmdRun(
 		slaveID := exec.SlaveID
 		mapData, ok := slaveConCtr.Find(slaveID)
 		if !ok {
-			log.Error(ctx, fmt.Sprintf("failed to find slave: %s", slaveID),
-				logger.Value("on", "Flow"))
+			log.Error(ctx, fmt.Sprintf("failed to find slave: %s", slaveID))
 			return fmt.Errorf("failed to find slave: %s", slaveID)
 		}
 		if exec.InheritValues {
@@ -865,20 +861,20 @@ func slaveCmdRun(
 		})
 		if err != nil {
 			log.Error(ctx, "failed to execute",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to execute slave command: %w", err)
 		}
 
 		stream, err := mapData.Cli.SlaveCommandDefaultStore(ctx)
 		if err != nil {
 			log.Error(ctx, "failed to execute",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to execute slave command default store: %w", err)
 		}
 		defaultStrBytes, err := json.Marshal(globalStr)
 		if err != nil {
 			log.Error(ctx, "failed to marshal",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to marshal default store: %w", err)
 		}
 		for i := 0; i < len(defaultStrBytes); i += DefaultChunkSize {
@@ -894,14 +890,14 @@ func slaveCmdRun(
 				IsLastChunk:  end == len(defaultStrBytes),
 			}); err != nil {
 				log.Error(ctx, "failed to send",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to send slave command default store request: %w", err)
 			}
 		}
 		defaultThreadOnlyStrBytes, err := json.Marshal(threadOnlyStr)
 		if err != nil {
 			log.Error(ctx, "failed to marshal",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to marshal default thread only store: %w", err)
 		}
 		for i := 0; i < len(defaultThreadOnlyStrBytes); i += DefaultChunkSize {
@@ -917,14 +913,14 @@ func slaveCmdRun(
 				IsLastChunk:  end == len(defaultThreadOnlyStrBytes),
 			}); err != nil {
 				log.Error(ctx, "failed to send",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to send slave command default store request: %w", err)
 			}
 		}
 		defaultSlaveValuesStrBytes, err := json.Marshal(slaveValuesMap)
 		if err != nil {
 			log.Error(ctx, "failed to marshal",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to marshal slave values: %w", err)
 		}
 		for i := 0; i < len(defaultSlaveValuesStrBytes); i += DefaultChunkSize {
@@ -940,13 +936,13 @@ func slaveCmdRun(
 				IsLastChunk:  end == len(defaultSlaveValuesStrBytes),
 			}); err != nil {
 				log.Error(ctx, "failed to send",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return fmt.Errorf("failed to send slave command default store request: %w", err)
 			}
 		}
 		if _, err := stream.CloseAndRecv(); err != nil {
 			log.Error(ctx, "failed to receive",
-				logger.Value("error", err), logger.Value("on", "Flow"))
+				logger.Value("error", err))
 			return fmt.Errorf("failed to receive slave command default store response: %w", err)
 		}
 
@@ -971,7 +967,7 @@ func slaveCmdRun(
 			if err != nil {
 				atomicErr.Store(&syncError{Err: err})
 				log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				return
 			}
 		}(executor)
@@ -981,7 +977,7 @@ func slaveCmdRun(
 
 	if syncErr := atomicErr.Load(); syncErr != nil {
 		log.Error(ctx, "failed to find error",
-			logger.Value("error", syncErr.Err), logger.Value("on", "slaveCmdRun"))
+			logger.Value("error", syncErr.Err))
 		return syncErr.Err
 	}
 
@@ -1007,7 +1003,7 @@ func (e slaveExecutor) exec(
 	})
 	if err != nil {
 		log.Error(ctx, "failed to call exec",
-			logger.Value("error", err), logger.Value("on", "Flow"))
+			logger.Value("error", err))
 		return fmt.Errorf("failed to call exec: %w", err)
 	}
 
@@ -1022,7 +1018,7 @@ func (e slaveExecutor) exec(
 				if v.closer != nil {
 					if err := v.closer(); err != nil {
 						log.Error(ctx, "failed to close",
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 					}
 				}
 			}
@@ -1032,16 +1028,16 @@ func (e slaveExecutor) exec(
 			if errors.Is(err, io.EOF) {
 				if err := stream.CloseSend(); err != nil {
 					log.Error(ctx, "failed to close send",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 				}
 				break
 			}
 			if err != nil {
 				log.Error(ctx, "failed to receive exec",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				if err := stream.CloseSend(); err != nil {
 					log.Error(ctx, "failed to close send",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 				}
 				return
 			}
@@ -1051,10 +1047,10 @@ func (e slaveExecutor) exec(
 			output, err := e.outFactor.Factorize(ctx, res.OutputId)
 			if err != nil {
 				log.Error(ctx, "failed to factorize output",
-					logger.Value("error", err), logger.Value("on", "Flow"))
+					logger.Value("error", err))
 				if err := stream.CloseSend(); err != nil {
 					log.Error(ctx, "failed to close send",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 				}
 				return
 			}
@@ -1076,10 +1072,10 @@ func (e slaveExecutor) exec(
 					)
 					if err != nil {
 						log.Error(ctx, "failed to create http data writer",
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 						if err := stream.CloseSend(); err != nil {
 							log.Error(ctx, "failed to close send",
-								logger.Value("error", err), logger.Value("on", "Flow"))
+								logger.Value("error", err))
 						}
 						return
 					}
@@ -1095,27 +1091,25 @@ func (e slaveExecutor) exec(
 					httpOut.Data,
 				); err != nil {
 					log.Error(ctx, "failed to write http data",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 					if err := stream.CloseSend(); err != nil {
 						log.Error(ctx, "failed to close send",
-							logger.Value("error", err), logger.Value("on", "Flow"))
+							logger.Value("error", err))
 					}
 					return
 				}
 			case pb.CallExecOutputType_CALL_EXEC_OUTPUT_TYPE_UNSPECIFIED:
-				log.Error(ctx, "invalid output type",
-					logger.Value("on", "Flow"))
+				log.Error(ctx, "invalid output type")
 				if err := stream.CloseSend(); err != nil {
 					log.Error(ctx, "failed to close send",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 				}
 				return
 			default:
-				log.Error(ctx, "invalid output type",
-					logger.Value("on", "Flow"))
+				log.Error(ctx, "invalid output type")
 				if err := stream.CloseSend(); err != nil {
 					log.Error(ctx, "failed to close send",
-						logger.Value("error", err), logger.Value("on", "Flow"))
+						logger.Value("error", err))
 				}
 				return
 			}
@@ -1127,12 +1121,11 @@ func (e slaveExecutor) exec(
 	})
 	if err != nil {
 		log.Error(ctx, "failed to receive term channel",
-			logger.Value("error", err), logger.Value("on", "Flow"))
+			logger.Value("error", err))
 		return fmt.Errorf("failed to receive term channel: %w", err)
 	}
 	if !termRes.Success {
-		log.Error(ctx, "failed to receive term channel",
-			logger.Value("on", "Flow"))
+		log.Error(ctx, "failed to receive term channel")
 		return fmt.Errorf("failed to receive term channel: %s", e.slaveID)
 	}
 

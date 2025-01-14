@@ -30,7 +30,7 @@ func (q RequestContent[Req]) RequestExecute(
 	req, err := q.Req.CreateRequest(ctx, log, 0)
 	if err != nil {
 		log.Error(ctx, "failed to create request",
-			logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"))
+			logger.Value("error", err))
 		return ResponseContent{}, fmt.Errorf("failed to create request: %w", err)
 	}
 
@@ -43,16 +43,16 @@ func (q RequestContent[Req]) RequestExecute(
 	}
 
 	log.Debug(ctx, "sending request",
-		logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+		logger.Value("url", req.URL))
 	startTime := time.Now()
 	resp, err := client.Do(req)
 	endTime := time.Now()
 	log.Debug(ctx, "received response",
-		logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+		logger.Value("url", req.URL))
 
 	if err != nil {
 		log.Error(ctx, "response error",
-			logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+			logger.Value("error", err), logger.Value("url", req.URL))
 		return ResponseContent{
 			Success:      false,
 			StartTime:    startTime,
@@ -68,7 +68,7 @@ func (q RequestContent[Req]) RequestExecute(
 	responseByte, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Error(ctx, "failed to read response",
-			logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+			logger.Value("error", err), logger.Value("url", req.URL))
 
 		return ResponseContent{
 			Success:        false,
@@ -96,7 +96,7 @@ func (q RequestContent[Req]) RequestExecute(
 	}
 	if err != nil {
 		log.Error(ctx, "failed to parse response",
-			logger.Value("error", err), logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+			logger.Value("error", err), logger.Value("url", req.URL))
 		return ResponseContent{
 			Success:        false,
 			Res:            response,
@@ -109,7 +109,7 @@ func (q RequestContent[Req]) RequestExecute(
 		}, nil
 	}
 	log.Debug(ctx, "response OK",
-		logger.Value("on", "RequestContent.QueryExecute"), logger.Value("url", req.URL))
+		logger.Value("url", req.URL))
 	return ResponseContent{
 		Success:      true,
 		ByteResponse: responseByte,

@@ -243,7 +243,7 @@ func (scc CountCondition) MatcherGenerate(ctx context.Context, log logger.Logger
 		}, nil
 	default:
 		log.Error(ctx, "unknown operator",
-			logger.Value("operator", scc.Op), logger.Value("on", "countMatherFactory"))
+			logger.Value("operator", scc.Op))
 		return nil, fmt.Errorf("unknown operator: %s", *scc.Op)
 	}
 }
