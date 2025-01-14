@@ -19,14 +19,18 @@ nav_order: 1
 Ensure the following environment variables are set before proceeding:
 
 #### Required Environment Variables
+- **`ARCH`**: Set to your system architecture. Valid values are:
+  - `x86_64`
+  - `arm64`
 - **`VERSION`**: Specify the version of `bloader` you want to install (e.g., `0.1.2`).
-- **`BLOADER_BIN_PATH`**: Install Path Prefix (e.g., `/usr/local/bin`).
+- **`BIN_PATH`**: Install Path Prefix (e.g., `/usr/local/bin`).
 
 #### Example Setup
 
 ``` sh
+export ARCH="x86_64"
 export VERSION=0.1.2
-export BLOADER_BIN_PATH="/usr/local/bin"
+export BIN_PATH="/usr/local/bin"
 ```
 
 ### Download the Release File
@@ -34,20 +38,20 @@ Download the appropriate archive file for your environment from the [GitHub Rele
 
 Use `curl` or `wget` to download the `.tar.gz` file:
 ``` sh
-curl -LO "https://github.com/cresplanex/bloader/releases/download/v${VERSION}/bloader_${VERSION}_$(uname -s)_$(uname -m).tar.gz"
+curl -LO "https://github.com/cresplanex/bloader/releases/download/v${VERSION}/bloader_${VERSION}_$(uname -s)_${ARCH}.tar.gz"
 ```
 
 ### Extract the Archive
 
 Extract the `.tar.gz` file:
 ``` sh
-tar -xzf "bloader_${VERSION}_$(uname -s)_$(uname -m).tar.gz"
+tar -xzf "bloader_${VERSION}_$(uname -s)_${ARCH}.tar.gz"
 ```
 
 ### Move the Binary to a Directory in `PATH`
 
 ``` sh
-sudo mv bloader ${BLOADER_BIN_PATH}
+sudo mv bloader ${BIN_PATH}
 ```
 
 ### Confirmation of installation completion
@@ -147,7 +151,8 @@ bloader version
 ## 5. Debian-based Linux (APT)
 
 ``` sh
-export BLOADER_VERSION=0.1.2 # must update what you need
+export ARCH="x86_64" # x86_64 or arm64
+export VERSION=0.1.2 # must update what you need
 ```
 
 Installation is possible using APT:
@@ -162,18 +167,23 @@ Installation is possible using APT:
 2. Download deb file
 
    ```bash
-   wget "https://github.com/cresplanex/bloader/releases/download/v${BLOADER_VERSION}/bloader_${BLOADER_VERSION}_$(uname -s)_$(uname -m).deb"
+   wget "https://github.com/cresplanex/bloader/releases/download/v${VERSION}/bloader_${VERSION}_$(uname -s)_${ARCH}.deb"
    ```
 
 3. Install the package:
 
    ```bash
-   sudo apt install ./bloader_${BLOADER_VERSION}_$(uname -s)_$(uname -m).deb
+   sudo apt install ./bloader_${VERSION}_$(uname -s)_${ARCH}.deb
    ```
 
 ## 6. RedHat-based Linux (RPM)
 
 > Note that the test has not been performed.(TODO)
+
+``` sh
+export ARCH="x86_64" # x86_64 or arm64
+export VERSION=0.1.2 # must update what you need
+```
 
 You can install using the RPM package:
 
@@ -186,7 +196,7 @@ You can install using the RPM package:
 2. Download deb file
 
    ```bash
-   wget "https://github.com/cresplanex/bloader/releases/download/v${BLOADER_VERSION}/bloader_${BLOADER_VERSION}_$(uname -s)_$(uname -m).rpm"
+   wget "https://github.com/cresplanex/bloader/releases/download/v${VERSION}/bloader_${VERSION}_$(uname -s)_${ARCH}.rpm"
    ```
 
 3. Install the package:
@@ -194,13 +204,13 @@ You can install using the RPM package:
    If use `yum`...
 
    ```bash
-   sudo yum localinstall bloader_${BLOADER_VERSION}_$(uname -s)_$(uname -m).rpm
+   sudo yum localinstall bloader_${VERSION}_$(uname -s)_${ARCH}.rpm
    ```
 
    If use `dnf`...
 
    ``` bash
-   sudo dnf install bloader_${BLOADER_VERSION}_$(uname -s)_$(uname -m).rpm
+   sudo dnf install bloader_${VERSION}_$(uname -s)_${ARCH}.rpm
    ```
 
 ## 7. Build from Source
