@@ -102,6 +102,7 @@ This style guide provides conventions and best practices for writing clean, main
 
 ## 🕐 Automation
 - Set up your editor to automatically format code on save.
+- We support `vscode` with `task` and `Makefile`. For more information, check the [Automation Guide](automation.md).
 - Run `golangci-lint` to catch linting issues.
   ```bash
   golangci-lint run
@@ -109,7 +110,7 @@ This style guide provides conventions and best practices for writing clean, main
 - Include pre-commit hooks to ensure formatting and linting:
   ```bash
   gofumpt -extra -w . && \
-  goimports -local github.com/cresplanex/bloader -w . && \
+  find . -name "*.go" -not -path "./gen/*" -exec goimports -w -local github.com/cresplanex/bloader {} + && \
   golangci-lint run
   ```
 

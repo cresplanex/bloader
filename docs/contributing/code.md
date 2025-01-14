@@ -7,7 +7,7 @@ Want to dive into the codebase? Follow these steps to ensure your contributions 
 2. **Create a Branch**: Use a meaningful branch name (e.g., `feature/add-command`).
 3. **Write Code**: Adhere to the [style guide](../style_guide.md) and keep it clean!
 4. **Format Your Code**: Use `gofumpt -extra` to ensure consistent formatting (details below).
-5. **Import Format Your Code**: Use `goimports -local github.com/cresplanex/bloader` to ensure consistent import formatting (details below).
+5. **Import Format Your Code**: Use `find . -name "*.go" -not -path "./gen/*" -exec goimports -w -local github.com/cresplanex/bloader {} +` to ensure consistent import formatting (details below).
 6. **Lint Your Code**: Run `golangci-lint` to catch potential issues (details below).
 7. **Test Your Code**: Use `gotestsum` to run tests and ensure everything passes (details below).
 8. **Check Proto Buffer**: Follow [Buf Usage Guide](buf.md) to change the proto.
@@ -49,7 +49,7 @@ Use `goimports` to manage and organize imports with three groups:
 
 Configure `goimports` to use three groups by setting it up in your editor or running it manually:
 ```bash
-goimports -local github.com/cresplanex/bloader -w .
+find . -name "*.go" -not -path "./gen/*" -exec goimports -w -local github.com/cresplanex/bloader {} +
 ```
 
 ### 🛡️ CI Enforcement
