@@ -495,7 +495,7 @@ func (r ValidMassExec) runHTTP(
 	}
 
 	var wg sync.WaitGroup
-	atomicErr := atomic.Value{}
+	var atomicErr atomic.Pointer[syncError]
 	startChan := make(chan struct{})
 	for _, executor := range threadExecutors {
 		wg.Add(1)
@@ -509,7 +509,7 @@ func (r ValidMassExec) runHTTP(
 			defer wg.Done()
 			defer close(exec.ReqTermChan)
 			if err := exec.Execute(ctx, log, startChan); err != nil {
-				atomicErr.Store(err)
+				atomicErr.Store(&syncError{Err: err})
 				log.Error(ctx, "failed to execute",
 					logger.Value("error", err), logger.Value("id", exec.ID))
 				return
@@ -519,15 +519,10 @@ func (r ValidMassExec) runHTTP(
 	close(startChan)
 	wg.Wait()
 
-	if err := atomicErr.Load(); err != nil {
-		if e, ok := err.(error); ok {
-			log.Error(ctx, "failed to find error",
-				logger.Value("error", e), logger.Value("on", "MassExecuteBatch"))
-			return e
-		}
-		log.Error(ctx, "failed to find unknown error")
-
-		return fmt.Errorf("failed to find error")
+	if syncErr := atomicErr.Load(); syncErr != nil {
+		log.Error(ctx, "failed to find error",
+			logger.Value("error", syncErr.Err), logger.Value("on", "ValidMassExec.runHTTP"))
+		return syncErr.Err
 	}
 
 	return nil
