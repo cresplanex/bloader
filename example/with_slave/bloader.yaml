@@ -2,7 +2,7 @@ version: "v1"
 type: master
 env: "production"
 loader:
-  base_path: "case"
+  base_path: "runner"
 targets:
   - id: "apiServer"
     type: "http"

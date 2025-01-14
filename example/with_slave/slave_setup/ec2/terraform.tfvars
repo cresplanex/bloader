@@ -1,6 +1,6 @@
-region           = "us-west-1"
+region           = "us-east-2"
 profile_name     = "terraform"
-bloader_version = "v1.0.2"
+bloader_version = "1.0.1" # without v prefix
 tls_enabled      = true
 tls_period_hours = 8760
 ca_cert_file_path = "../../certs/ca.crt" # Attention: This is a relative path from the main.tf directory
@@ -9,7 +9,7 @@ slave_ca_cert_file_path = "certs/slave_ca.crt" # Attention: This is a relative p
 slave_ca_key_file_path  = "certs/slave_ca.key" # Attention: This is a relative path from the bloader directory
 slave_cert_file_path = "certs/slave.crt" # Attention: This is a relative path from the bloader directory
 slave_key_file_path  = "certs/slave.key" # Attention: This is a relative path from the bloader directory
-availability_zone = "us-west-1a"
+availability_zone = "us-east-2b"
 instance_count    = 4
 instance_type     = "c8g.medium"
 instance_architecture = "arm64" # "x86_64" or "arm64"

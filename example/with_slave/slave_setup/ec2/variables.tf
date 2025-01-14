@@ -13,11 +13,6 @@ variable "bloader_version" {
     type = string
 }
 
-variable "slave_config_path" {
-    description = "File path of the slave_config.yaml file"
-    type        = string
-}
-
 variable "tls_enabled" {
     description = "Whether to enable TLS"
     type = bool
