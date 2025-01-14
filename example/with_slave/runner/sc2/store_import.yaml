@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "userPreferencesLists"
+    bucket_id: "bucketForApp"
+    store_key: "userPreferencesLists"

@@ -1,0 +1,7 @@
+kind: Flow
+step:
+  concurrency: 0
+  flows:
+    - id: "create_file_objects"
+      type: file
+      file: "store/file_object/create_file_object.yaml"

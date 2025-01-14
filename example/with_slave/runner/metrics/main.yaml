@@ -1,0 +1,38 @@
+kind: Flow
+step:
+  # if set to 0, it will run one by one in sequence,(default: 0)
+  # if set to minus, it will run all the queries in sequence
+  concurrency: -1
+  flows:
+    - id: "cpu"
+      type: file
+      file: "metrics/cpu.yaml"
+      mkdir: true
+    - id: "cpu_rate"
+      type: file
+      file: "metrics/cpu_rate.yaml"
+      mkdir: true
+    - id: "memory"
+      type: file
+      file: "metrics/memory.yaml"
+      mkdir: true
+    - id: "memory_rate"
+      type: file
+      file: "metrics/memory_rate.yaml"
+      mkdir: true
+    - id: "db_cpu"
+      type: file
+      file: "metrics/db_cpu.yaml"
+      mkdir: true
+    - id: "db_cpu_rate"
+      type: file
+      file: "metrics/db_cpu_rate.yaml"
+      mkdir: true
+    - id: "db_memory"
+      type: file
+      file: "metrics/db_memory.yaml"
+      mkdir: true
+    - id: "db_memory_rate"
+      type: file
+      file: "metrics/db_memory_rate.yaml"
+      mkdir: true

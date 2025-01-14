@@ -1,0 +1,39 @@
+kind: MassExecute
+type: http
+output:
+  enabled: true
+  ids: 
+    - outputLocalCSV
+auth: 
+  enabled: true
+  auth_id: authForWeb
+requests:
+{{- range until (int $.Values.ThreadPerSlaveCount) }}
+  - target_id: "apiServer"
+    endpoint: "/teams"
+    method: GET
+    interval: {{ $.ThreadValues.Interval }}
+    await_prev_response: false
+    headers: {}
+    query_param:
+      offset: 0
+      pagination: "offset"
+      limit: {{ $.ThreadValues.Limit }}
+      with:
+        - users
+    body_type: json
+    path_variables: {}
+    body: {}
+    success_break:
+      - time
+    break:
+      time: {{ $.ThreadValues.BreakTime }}
+      sys_error: true
+      parse_error: true
+      write_error: true
+      status_code:
+        - id: error
+          op: ne
+          value: 200
+    response_type: json
+{{- end }}

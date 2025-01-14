@@ -1,0 +1,12 @@
+kind: SlaveConnect
+slaves:
+{{- range slice .Values.slaveLists 0 .Values.SlaveCount }}
+  - id: "{{ .id }}"
+    uri: "dns:{{ .address }}:{{ .port }}" # support schema https://github.com/grpc/grpc/blob/master/doc/naming.md
+    certificate:
+      enabled: true
+      ca_cert: "certs/ca.crt"
+      server_name_override: "localhost"
+      insecure_skip_verify: true
+{{- end }}
+

@@ -1,0 +1,24 @@
+{{- $timezoneList := list "America/New_York" "America/Los_Angeles" "America/Chicago" "America/Denver" "America/Phoenix" "America/Anchorage" "America/Adak" "Pacific/Honolulu" -}}
+{{- $themeList := list "dark" "light" "system" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "userPreferencesLists"
+    value:
+    {{- range $sIndex, $sElement := until .Values.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
+        {{- $randOnTimezone := randInt 0 8 }}
+        {{- $randOnTheme := randInt 0 3 }}
+          - id: {{ $iter }}
+            userPreferenceId: {{ (index $.Values.retrievedUsersListsWithPreference $iter).userPreference.userPreferenceId }}
+            timezone: {{ index $timezoneList $randOnTimezone }}
+            theme: {{ index $themeList $randOnTheme }}
+            language: {{ randAlpha 2 | lower }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

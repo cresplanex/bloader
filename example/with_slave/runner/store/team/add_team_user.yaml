@@ -1,0 +1,21 @@
+{{- $iter := 1 -}}
+{{- $sumCount := mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "teamUsersLists"
+    value:
+    {{- range $sIndex, $sElement := until .Values.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
+        {{- $fixedIter := mod $iter $sumCount }}
+          - id: {{ $iter }}
+            teamId: {{ (index $.Values.retrievedOrganizationsLists $iter).teamId }}
+            userIds: 
+              - {{ (index $.Values.retrievedUsersLists $fixedIter).userProfile.userId }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

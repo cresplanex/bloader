@@ -1,0 +1,13 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_users"
+      type: file
+      file: "store/user_profile/retrieve_users_with_preference.yaml"
+    - id: "update_user_preferences"
+      type: file
+      depends_on:
+        - flow: retrieve_users
+          event: sys:terminated
+      file: "store/user_preference/update_user_preference.yaml"

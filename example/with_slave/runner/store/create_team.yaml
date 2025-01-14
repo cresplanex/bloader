@@ -1,0 +1,18 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_users"
+      type: file
+      file: "store/user_profile/retrieve_users.yaml"
+    - id: "retrieve_organizations"
+      type: file
+      file: "store/organization/retrieve_organizations.yaml"
+    - id: "create_teams"
+      type: file
+      depends_on:
+        - flow: retrieve_users
+          event: sys:terminated
+        - flow: retrieve_organizations
+          event: sys:terminated
+      file: "store/team/create_team.yaml"

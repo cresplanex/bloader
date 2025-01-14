@@ -1,0 +1,70 @@
+kind: MassExecute
+type: http
+output:
+  enabled: true
+  ids: 
+    - outputLocalCSV
+requests:
+  - target_id: "metricsServer"
+    endpoint: "/api/v1/query"
+    method: GET
+    interval: {{ $.Values.MetricsInterval }}
+    await_prev_response: false
+    headers: {}
+    query_param:
+      query: 'sum by(namespace) (container_cpu_usage_seconds_total{container!="POD",container!="",namespace!="kube-system", image=~"docker.io/bitnami/postgresql:.*", job="kubelet"})'
+    path_variables: {}
+    success_break:
+      - time
+    break:
+      time: {{ $.Values.MetricsBreakTime }}
+      sys_error: true
+      parse_error: true
+      write_error: true
+      status_code:
+        - id: metricsError
+          op: ne
+          value: 200
+    response_type: json
+    record_exclude_filter:
+      status_code:
+        - id: error
+          op: ne
+          value: 200
+    data:
+      - key: "UserProfile"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='user-profile-service'].value[1] | [0]"
+      - key: "UserPreference"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='user-preference-service'].value[1] | [0]"
+      - key: "Organization"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='organization-service'].value[1] | [0]"
+      - key: "Team"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='team-service'].value[1] | [0]"
+      - key: "Plan"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='plan-service'].value[1] | [0]"
+      - key: "Storage"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='storage-service'].value[1] | [0]"
+      - key: "Auth"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='auth-service'].value[1] | [0]"
+      - key: "Websocket"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='websocket-service'].value[1] | [0]"
+      - key: "Job"
+        extractor:
+          type: "jmesPath"
+          jmes_path: "data.result[?metric.namespace=='job-service'].value[1] | [0]"
