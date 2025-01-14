@@ -521,7 +521,7 @@ func (r ValidMassExec) runHTTP(
 
 	if syncErr := atomicErr.Load(); syncErr != nil {
 		log.Error(ctx, "failed to find error",
-			logger.Value("error", syncErr.Err), logger.Value("on", "ValidMassExec.runHTTP"))
+			logger.Value("error", syncErr.Err))
 		return syncErr.Err
 	}
 

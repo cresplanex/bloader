@@ -44,7 +44,7 @@ func (o LocalOutput) HTTPDataWriteFactory(
 	f, err := utils.CreateFileWithDir(filePath)
 	if err != nil {
 		log.Error(ctx, "failed to create file",
-			logger.Value("error", err), logger.Value("on", "runAsyncProcessing"))
+			logger.Value("error", err))
 		return nil, nil, fmt.Errorf("failed to create file: %w", err)
 	}
 	switch o.Format {
@@ -52,7 +52,7 @@ func (o LocalOutput) HTTPDataWriteFactory(
 		writer := csv.NewWriter(f)
 		if err := writer.Write(header); err != nil {
 			log.Error(ctx, "failed to write header",
-				logger.Value("error", err), logger.Value("on", "runAsyncProcessing"))
+				logger.Value("error", err))
 			return nil, nil, fmt.Errorf("failed to write header: %w", err)
 		}
 		writer.Flush()
@@ -69,10 +69,10 @@ func (o LocalOutput) HTTPDataWriteFactory(
 			case config.OutputFormatCSV:
 				writer := csv.NewWriter(f)
 				log.Debug(ctx, "Writing data to csv",
-					logger.Value("data", data), logger.Value("on", "runAsyncProcessing"))
+					logger.Value("data", data))
 				if err := writer.Write(data); err != nil {
 					log.Error(ctx, "failed to write data to csv",
-						logger.Value("error", err), logger.Value("on", "runAsyncProcessing"))
+						logger.Value("error", err))
 				}
 				writer.Flush()
 				return nil
