@@ -727,7 +727,6 @@ func run(
 						NewDefaultEventCasterWithBroadcaster(preExecutor.eventCaster),
 					)
 					if err != nil {
-						fmt.Printf("type file failed to execute flow[%d], %v(type: %T)\n", i, err, err)
 						atomicErr.Store(&syncError{Err: err})
 						log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
 							logger.Value("error", err))
