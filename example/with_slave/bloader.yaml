@@ -1,0 +1,82 @@
+version: "v1"
+type: master
+env: "production"
+loader:
+  base_path: "case"
+targets:
+  - id: "apiServer"
+    type: "http"
+    values:
+      - env: "local"
+        url: "http://localhost:8080"
+      - env: "production"
+        url: "https://web.state.api.cresplanex.org"
+  - id: "metricsServer"
+    type: "http"
+    values:
+      - env: "local"
+        url: "http://localhost:10090/api/v1/query"
+      - env: "production"
+        url: "https://prometheus.state.api.cresplanex.org"
+outputs:
+  - id: "outputLocalCSV"
+    values:
+      - env: "local"
+        type: "local"
+        format: "csv"
+        base_path: "outputs/local-csv"
+      - env: "production"
+        type: "local"
+        format: "csv"
+        base_path: "outputs/prod-csv"
+store:
+  file:
+    - env: "local"
+      path: "local_store/local_store.db"
+    - env: "production"
+      path: "local_store/prod_store.db"
+  buckets:
+    - "bucketForEncrypt"
+    - "bucketForCredential"
+    - "bucketForApp"
+    - "bucketForSlave"
+encrypts:
+  - id: "encryptDynamicCBC"
+    type: "dynamicCBC"
+    store:
+      bucket_id: "bucketForEncrypt"
+      key: "encryptKeyForDynamicStore"
+auth:
+  - id: "authForWeb"
+    default: true
+    type: "oauth2"
+    oauth2:
+      grant_type: "authorization_code"
+      client_id: "register_client"
+      client_secret: "register_client_secret"
+      auth_url: "https://auth.state.api.cresplanex.org/oauth2/authorize"
+      token_url: "https://auth.state.api.cresplanex.org/oauth2/token"
+      access_type: "offline"
+      scope:
+        - "openid"
+        - "email"
+      credential:
+        store:
+          bucket_id: "bucketForCredential"
+          key: "webAuthCredential"
+          encrypt:
+            enabled: true
+            encrypt_id: "encryptDynamicCBC"
+server:
+  port: 9800
+logging:
+  output:
+    - type: "stdout"
+      format: "text"
+      level: "warn"
+clock:
+  format: "2006-01-02T15:04:05Z"
+language:
+  default: "en"
+override: []
+
