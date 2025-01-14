@@ -26,7 +26,7 @@ Follow these steps to get the project running locally:
    ```
 5. Format package imports:
    ```bash
-   goimports -local github.com/cresplanex/bloader -w .
+   find . -name "*.go" -not -path "./gen/*" -exec goimports -w -local github.com/cresplanex/bloader {} +
    ```
 6. Run linting:
    ```bash
