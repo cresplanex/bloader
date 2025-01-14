@@ -1,0 +1,5 @@
+local_store/
+outputs/
+certs/
+ssh_keys/
+*.log

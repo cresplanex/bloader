@@ -1,0 +1,7 @@
+kind: Flow
+step:
+  concurrency: 0
+  flows:
+    - id: "create_user_profiles"
+      type: file
+      file: "store/user_profile/create_user_profile.yaml"

@@ -1,0 +1,13 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_tasks"
+      type: file
+      file: "store/task/retrieve_tasks.yaml"
+    - id: "update_tasks"
+      type: file
+      depends_on:
+        - flow: retrieve_tasks
+          event: sys:terminated
+      file: "store/task/update_task.yaml"

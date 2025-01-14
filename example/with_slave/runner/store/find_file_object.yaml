@@ -1,0 +1,13 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_file_objects"
+      type: file
+      file: "store/file_object/retrieve_file_objects.yaml"
+    - id: "find_file_objects"
+      type: file
+      depends_on:
+        - flow: retrieve_file_objects
+          event: sys:terminated
+      file: "store/file_object/find_file_object.yaml"

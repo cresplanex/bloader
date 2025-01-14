@@ -1,0 +1,13 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_teams"
+      type: file
+      file: "store/team/retrieve_teams.yaml"
+    - id: "find_teams"
+      type: file
+      depends_on:
+        - flow: retrieve_teams
+          event: sys:terminated
+      file: "store/team/find_team.yaml"

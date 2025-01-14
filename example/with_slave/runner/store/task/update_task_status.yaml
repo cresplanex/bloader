@@ -1,0 +1,20 @@
+{{- $statusList := list "PENDING" "PROCESSING" "COMPLETED" "FAILED" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "updateTasksLists"
+    value:
+    {{- range $sIndex, $sElement := until .Values.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
+        {{- $randOnStatus := randInt 0 4 }}
+          - id: {{ $iter }}
+            taskId: {{ (index $.Values.retrievedTasksLists $iter).taskId }}
+            status: {{ index $statusList $randOnStatus }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

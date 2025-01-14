@@ -1,0 +1,30 @@
+{{- $datetimeFormat := "2006-01-02T15:04:05Z" -}}
+{{- $currentDatetime := now -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "tasksLists"
+    value:
+    {{- range $sIndex, $sElement := until .Values.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
+        {{- $randOnTitle := randInt 5 10 }}
+        {{- $randOnDescription := randInt 10 30 }}
+        {{- $startDatetime := $currentDatetime | date_modify (printf "-%dh" (randInt 1 72)) }}
+        {{- $dueDatetime := $startDatetime | date_modify (printf "+%dh" (randInt 1 72)) }}
+          - id: {{ $iter }}
+            title: {{ randAlpha $randOnTitle | title }}
+            description: {{ randAlpha $randOnDescription }}
+            teamId: {{ (index $.Values.retrievedTeamsLists $iter).teamId }}
+            chargeUserId: {{ (index $.Values.retrievedUsersLists $iter).userProfile.userId }}
+            attachmentsIds:
+              - {{ (index $.Values.retrievedFileObjectsLists $iter).fileObjectId }}
+            startDatetime: {{ $startDatetime | date $datetimeFormat }}
+            dueDatetime: {{ $dueDatetime | date $datetimeFormat }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

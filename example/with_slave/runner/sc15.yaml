@@ -1,0 +1,45 @@
+kind: Flow
+step:
+  concurrency: 0
+  flows:
+    - id: "store"
+      type: flow
+      mkdir: false
+      values:
+        - key: "ThreadPerSlaveCount"
+          value: 25
+        - key: "RequestPerSlaveCount"
+          value: 3010
+        - key: "SlaveCount"
+          value: 4
+      concurrency: -1
+      flows:
+        - id: "findTeamsStore"
+          type: file
+          mkdir: false
+          file: "store/find_team.yaml"
+          values: []
+          thread_only_values: []
+        - id: "slaveStoreInMemory"
+          type: file
+          mkdir: false
+          file: "slave/memory.yaml"
+          values: []
+          thread_only_values: []
+    - id: "import"
+      type: flow
+      mkdir: false
+      concurrency: -1
+      flows:
+        - id: "storeImport"
+          type: file
+          file: "sc15/store_import.yaml"
+          mkdir: false
+          values: []
+          thread_only_values: []
+    - id: "main"
+      type: file
+      mkdir: false
+      file: "sc15/flow.yaml"
+      values: []
+      thread_only_values: []

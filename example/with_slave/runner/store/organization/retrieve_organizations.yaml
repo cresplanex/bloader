@@ -1,0 +1,28 @@
+kind: OneExecute
+type: http
+output:
+  enabled: false
+auth:
+  enabled: true
+  auth_id: authForWeb
+request:
+  target_id: "apiServer"
+  endpoint: "/organizations"
+  method: GET
+  query_param:
+    pagination: "offset"
+    limit: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+    offset: 0
+  path_variables: {}
+  body_type: "json"
+  body: {}
+  response_type: "json"
+  data: []
+  store_data: []
+  memory_data:
+    - key: "retrievedOrganizationsLists"
+      extractor:
+        type: "jmesPath"
+        jmes_path: "data"
+        on_nil: "error"
+
