@@ -1,0 +1,190 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run go mod tidy",
+            "type": "shell",
+            "command": "go",
+            "args": ["mod", "tidy"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run gofumpt",
+            "type": "shell",
+            "command": "gofumpt",
+            "args": ["-extra", "-w", "."],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run goimports",
+            "type": "shell",
+            "command": "find",
+            "args": [
+            ".",
+            "-name",
+            "\"*.go\"",
+            "-not",
+            "-path",
+            "\"./gen/*\"",
+            "-exec",
+            "goimports",
+            "-w",
+            "-local",
+            "github.com/cresplanex/bloader",
+            "{}",
+            "+"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run golangci-lint",
+            "type": "shell",
+            "command": "golangci-lint",
+            "args": ["run"],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run gotestsum",
+            "type": "shell",
+            "command": "gotestsum",
+            "args": ["--format=short-verbose"],
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf generate",
+            "type": "shell",
+            "command": "buf",
+            "args": ["generate"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf lint",
+            "type": "shell",
+            "command": "buf",
+            "args": ["lint"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf format",
+            "type": "shell",
+            "command": "buf",
+            "args": ["format", "-w"],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf breaking",
+            "type": "shell",
+            "command": "buf",
+            "args": [
+            "breaking",
+            "proto",
+            "--against",
+            ".git#subdir=proto"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run go rewrite flow",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting go rewrite flows..."],
+            "dependsOn": [
+                "Run gofumpt",
+                "Run goimports"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run go test flow",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting go test flows..."],
+            "dependsOn": [
+                "Run golangci-lint",
+                "Run gotestsum"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run go CI flow",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting go CI flows..."],
+            "dependsOn": [
+                "Run go rewrite flow",
+                "Run go test flow"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run all go tasks",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting all go tasks..."],
+            "dependsOn": [
+                "Run go mod tidy",
+                "Run go CI flow"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf test flow",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting buf test flows..."],
+            "dependsOn": [
+                "Run buf lint",
+                "Run buf breaking"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Run buf CI flow",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting buf CI flows..."],
+            "dependsOn": [
+                "Run buf format",
+                "Run buf test flow"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run all buf tasks",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting all buf tasks..."],
+            "dependsOn": [
+                "Run buf generate",
+                "Run buf CI flow"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run all tasks",
+            "type": "shell",
+            "command": "echo",
+            "args": ["Starting all tasks..."],
+            "dependsOn": [
+                "Run all buf tasks",
+                "Run all go tasks"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        }
+    ]
+}
