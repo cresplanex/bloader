@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.2] - 2025-01-14
+
+### 🚀 Features
+✔️ Add slave setup with terraform #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 20:44:35 +0900]
+
+✔️ Merge pull request #31 from cresplanex/feat/feature-add-program-info-to-log_#30 (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 19:55:40 +0900]
+
+✔️ Add code Info to Logger #30 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:50:22 +0900]
+
+✔️ Delete on property represents FunctionName #30 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:49:53 +0900]
+
+✔️ Merge pull request #29 from cresplanex/feat/feature-define-task-for-automation_#28 (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 19:37:49 +0900]
+
+✔️ Merge pull request #27 from cresplanex/feat/bug-panic-by-type-of-atomicerr_#26 (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 18:10:01 +0900]
+
+✔️ Define sync common error #26 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 17:49:59 +0900]
+
+
+### 🐞 Bug fixes
+✔️ fix; Update Runner definition #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 23:04:15 +0900]
+
+✔️ Use atomic Pointer from atomic Value #26 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 17:50:09 +0900]
+
+
+### 📃 Documentation
+✔️ Merge pull request #33 from cresplanex/docs/docs-creating-an-example_#32 (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 23:06:53 +0900]
+
+✔️ Create Example guide #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 23:04:32 +0900]
+
+✔️ Add with_slave bloader.yaml #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 20:36:40 +0900]
+
+✔️ Add terraform cmd on asdf #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 20:34:05 +0900]
+
+✔️ Add task automation docs #28 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:26:28 +0900]
+
+
+### 💻 Chores
+✔️ Create question.md (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 20:01:50 +0900]
+
+✔️ Create security_issue.md (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 20:01:12 +0900]
+
+✔️ Create documentation_request.md (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 20:00:09 +0900]
+
+✔️ Create maintenance_talk.md (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-14 19:59:23 +0900]
+
+✔️ Changed formatting method to not include automatically generated go files in proto #28 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:26:09 +0900]
+
+✔️ Define vscode task for task flow #28 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:24:55 +0900]
+
+✔️ Create Makefile for task flow #28 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 19:24:37 +0900]
+
+
+### 🔔 Others
+✔️ Add runner with_slave example #32 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-14 20:37:11 +0900]
+
+
 ## [v1.0.1] - 2025-01-14
 
 ### 📃 Documentation
