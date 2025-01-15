@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.3] - 2025-01-15
+
+### 🐞 Bug fixes
+✔️ Prevent exec + 1 count (omniarchy <k.hayashi@cresplanex.com>) [2025-01-15 19:36:22 +0900]
+
+
+### 🔔 Others
+✔️ Fix: Fix dont need print (omniarchy <k.hayashi@cresplanex.com>) [2025-01-15 04:38:23 +0900]
+
+
 ## [v1.0.2] - 2025-01-14
 
 ### 🚀 Features
