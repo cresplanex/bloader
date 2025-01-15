@@ -157,6 +157,42 @@ func runResponseHandler(
 			}
 			return
 		case v := <-resChan:
+			if v.WithCountLimit {
+				sentLen := len(sentUID)
+				writeErr := false
+				for sentLen > 0 {
+					select {
+					case <-reqTermChan:
+						return
+					case uid := <-uidChan:
+						delete(sentUID, uid)
+						sentLen--
+					case <-writeErrChan:
+						log.Warn(ctx, "write error occurred",
+							logger.Value("id", id), logger.Value("count", v.Count))
+						writeErr = true
+					}
+				}
+				if writeErr {
+					log.Warn(ctx, "Term Condition: Write Error",
+						logger.Value("id", id), logger.Value("count", v.Count))
+					select {
+					case termChan <- NewTermChanType(matcher.TerminateTypeByWriteError, ""):
+					case <-reqTermChan:
+						return
+					}
+					return
+				}
+
+				log.Info(ctx, "Term Condition: Count Limit",
+					logger.Value("id", id), logger.Value("count", v.Count))
+				select {
+				case termChan <- NewTermChanType(matcher.TerminateTypeByCount, ""):
+				case <-reqTermChan:
+					return
+				}
+				return
+			}
 			mustWrite := true
 			var response any
 			err := json.Unmarshal(v.ByteResponse, &response)
@@ -321,42 +357,6 @@ func runResponseHandler(
 				}
 				log.Warn(ctx, "Parse error occurred",
 					logger.Value("id", id), logger.Value("count", v.Count))
-			}
-			if v.WithCountLimit {
-				sentLen := len(sentUID)
-				writeErr := false
-				for sentLen > 0 {
-					select {
-					case <-reqTermChan:
-						return
-					case uid := <-uidChan:
-						delete(sentUID, uid)
-						sentLen--
-					case <-writeErrChan:
-						log.Warn(ctx, "write error occurred",
-							logger.Value("id", id), logger.Value("count", v.Count))
-						writeErr = true
-					}
-				}
-				if writeErr {
-					log.Warn(ctx, "Term Condition: Write Error",
-						logger.Value("id", id), logger.Value("count", v.Count))
-					select {
-					case termChan <- NewTermChanType(matcher.TerminateTypeByWriteError, ""):
-					case <-reqTermChan:
-						return
-					}
-					return
-				}
-
-				log.Info(ctx, "Term Condition: Count Limit",
-					logger.Value("id", id), logger.Value("count", v.Count))
-				select {
-				case termChan <- NewTermChanType(matcher.TerminateTypeByCount, ""):
-				case <-reqTermChan:
-					return
-				}
-				return
 			}
 			matchID, isMatch, err = request.Break.ResponseBodyMatcher(response)
 			if err != nil {

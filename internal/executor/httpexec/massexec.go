@@ -36,12 +36,10 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 	ctx context.Context,
 	log logger.Logger,
 ) error {
-	limCount := q.CountLimit.Count - 1
 	go func() {
 		// defer close(q.ResChan) // TODO: close channel
 		waitForResponse := q.ResponseWait
 		var count int
-		var countLimitOver bool
 		chanForWait := make(chan struct{})
 		defer close(chanForWait)
 
@@ -76,14 +74,23 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					}
 				}
 
-				count++
-				if q.CountLimit.Enabled && count >= limCount {
+				if q.CountLimit.Enabled && count >= q.CountLimit.Count {
 					log.Info(ctx, "request processing is interrupted due to count limit",
 						logger.Value("on", "RequestContent.QueryExecute"))
-					countLimitOver = true
+					select {
+					case <-ctx.Done():
+						log.Info(ctx, "request processing is interrupted due to context termination",
+							logger.Value("on", "RequestContent.QueryExecute"))
+						return
+					case q.ResChan <- ResponseContent{
+						WithCountLimit: true,
+					}: // do nothing
+					}
+
+					return
 				}
 
-				go func(countInternal int, countOver bool) {
+				go func(countInternal int) {
 					defer func() {
 						if waitForResponse {
 							chanForWait <- struct{}{}
@@ -100,10 +107,9 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 								logger.Value("on", "RequestContent.QueryExecute"))
 							return
 						case q.ResChan <- ResponseContent{
-							Success:        false,
-							HasSystemErr:   true,
-							WithCountLimit: countLimitOver,
-							Count:          countInternal,
+							Success:      false,
+							HasSystemErr: true,
+							Count:        countInternal,
 						}: // do nothing
 						}
 
@@ -132,13 +138,12 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 								logger.Value("url", req.URL))
 							return
 						case q.ResChan <- ResponseContent{
-							Success:        false,
-							StartTime:      startTime,
-							EndTime:        endTime,
-							Count:          countInternal,
-							ResponseTime:   endTime.Sub(startTime).Milliseconds(),
-							HasSystemErr:   true,
-							WithCountLimit: countOver,
+							Success:      false,
+							StartTime:    startTime,
+							EndTime:      endTime,
+							Count:        countInternal,
+							ResponseTime: endTime.Sub(startTime).Milliseconds(),
+							HasSystemErr: true,
 						}: // do nothing
 							log.Error(ctx, "response error",
 								logger.Value("startTime", startTime),
@@ -173,7 +178,6 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 							ResponseTime:   endTime.Sub(startTime).Milliseconds(),
 							StatusCode:     statusCode,
 							ParseResHasErr: true,
-							WithCountLimit: countOver,
 						}: // do nothing
 							log.Error(ctx, "failed to read response",
 								logger.Value("responseByte", string(responseByte)),
@@ -219,7 +223,6 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 							ResponseTime:   endTime.Sub(startTime).Milliseconds(),
 							StatusCode:     statusCode,
 							ParseResHasErr: true,
-							WithCountLimit: countOver,
 						}: // do nothing
 							log.Error(ctx, "failed to parse response",
 								logger.Value("responseByte", string(responseByte)),
@@ -237,15 +240,14 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 					log.Debug(ctx, "response OK",
 						logger.Value("url", req.URL))
 					responseContent := ResponseContent{
-						Success:        true,
-						ByteResponse:   responseByte,
-						Res:            response,
-						StartTime:      startTime,
-						EndTime:        endTime,
-						Count:          countInternal,
-						ResponseTime:   endTime.Sub(startTime).Milliseconds(),
-						StatusCode:     statusCode,
-						WithCountLimit: countOver,
+						Success:      true,
+						ByteResponse: responseByte,
+						Res:          response,
+						StartTime:    startTime,
+						EndTime:      endTime,
+						Count:        countInternal,
+						ResponseTime: endTime.Sub(startTime).Milliseconds(),
+						StatusCode:   statusCode,
 					}
 					select {
 					case q.ResChan <- responseContent:
@@ -254,14 +256,9 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 							logger.Value("url", req.URL))
 						return
 					}
-				}(count, countLimitOver)
+				}(count)
 
-				if countLimitOver {
-					<-ctx.Done()
-					log.Info(ctx, "request processing is interrupted due to count limit",
-						logger.Value("on", "RequestContent.QueryExecute"))
-					return
-				}
+				count++
 			}
 		}
 	}()
