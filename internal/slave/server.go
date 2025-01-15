@@ -350,11 +350,11 @@ func (s *Server) ReceiveChanelConnect(
 		case <-s.globalCtx.Done():
 			s.log.Debug(s.globalCtx, "global context done",
 				logger.Value("ConnectionID", req.ConnectionId), logger.Value("Error", s.globalCtx.Err()))
-			return fmt.Errorf("context done: %w", s.globalCtx.Err())
+			return nil
 		case <-stream.Context().Done():
 			s.log.Debug(stream.Context(), "stream context done",
 				logger.Value("ConnectionID", req.ConnectionId), logger.Value("Error", stream.Context().Err()))
-			return fmt.Errorf("context done: %w", stream.Context().Err())
+			return nil
 		}
 	}
 }
