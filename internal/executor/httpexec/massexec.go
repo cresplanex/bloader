@@ -36,6 +36,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 	ctx context.Context,
 	log logger.Logger,
 ) error {
+	limCount := q.CountLimit.Count - 1
 	go func() {
 		// defer close(q.ResChan) // TODO: close channel
 		waitForResponse := q.ResponseWait
@@ -76,7 +77,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 				}
 
 				count++
-				if q.CountLimit.Enabled && count >= q.CountLimit.Count {
+				if q.CountLimit.Enabled && count >= limCount {
 					log.Info(ctx, "request processing is interrupted due to count limit",
 						logger.Value("on", "RequestContent.QueryExecute"))
 					countLimitOver = true
