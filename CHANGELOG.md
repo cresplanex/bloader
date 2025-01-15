@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.4] - 2025-01-15
+
+### 🐞 Bug fixes
+✔️ No err on ctx cancel (omniarchy <k.hayashi@cresplanex.com>) [2025-01-15 21:19:03 +0900]
+
+✔️ Fix count limit behavior on mass exec (omniarchy <k.hayashi@cresplanex.com>) [2025-01-15 21:18:45 +0900]
+
+
 ## [v1.0.3] - 2025-01-15
 
 ### 🐞 Bug fixes
