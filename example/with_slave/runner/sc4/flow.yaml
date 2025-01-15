@@ -32,8 +32,6 @@ step:
       thread_only_values:
         - key: "Interval"
           value: "100ms"
-        - key: "BreakTime"
-          value: "5m"
       executors:
         {{- range slice .Values.slaveLists 0 .Values.SlaveCount }}
         - slave_id: "{{ .id }}"

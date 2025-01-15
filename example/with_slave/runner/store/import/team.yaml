@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: {{ cat "importedTeams" .Dynamic.LoopCount }}
+    bucket_id: "bucketForApp"
+    store_key: {{ cat "retrievedTeamsLists" .Dynamic.LoopCount }}

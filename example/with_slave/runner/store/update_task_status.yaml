@@ -1,10 +1,11 @@
 kind: Flow
 step:
-  concurrency: -1
+  concurrency: 0
   flows:
     - id: "retrieve_tasks"
       type: file
-      file: "store/task/retrieve_tasks.yaml"
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/import/task.yaml"
     - id: "update_tasks"
       type: file
       depends_on:

@@ -1,10 +1,11 @@
 kind: Flow
 step:
-  concurrency: -1
+  concurrency: 0
   flows:
     - id: "retrieve_file_objects"
       type: file
-      file: "store/file_object/retrieve_file_objects.yaml"
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/import/file_object.yaml"
     - id: "find_file_objects"
       type: file
       depends_on:

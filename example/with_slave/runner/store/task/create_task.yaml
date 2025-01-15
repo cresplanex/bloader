@@ -9,6 +9,9 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $teamData := get $.Values (cat "importedTeams" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
+        {{- $userData := get $.Values (cat "importedUsers" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
+        {{- $fileObjectData := get $.Values (cat "importedFileObjects" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
         {{- $randOnTitle := randInt 5 10 }}
@@ -18,10 +21,10 @@ data:
           - id: {{ $iter }}
             title: {{ randAlpha $randOnTitle | title }}
             description: {{ randAlpha $randOnDescription }}
-            teamId: {{ (index $.Values.retrievedTeamsLists $iter).teamId }}
-            chargeUserId: {{ (index $.Values.retrievedUsersLists $iter).userProfile.userId }}
+            teamId: {{ (index $teamData $index).teamId }}
+            chargeUserId: {{ (index $userData $index).userProfile.userId }}
             attachmentsIds:
-              - {{ (index $.Values.retrievedFileObjectsLists $iter).fileObjectId }}
+              - {{ (index $fileObjectData $index).fileObjectId }}
             startDatetime: {{ $startDatetime | date $datetimeFormat }}
             dueDatetime: {{ $dueDatetime | date $datetimeFormat }}
         {{- $iter = add $iter 1 }}

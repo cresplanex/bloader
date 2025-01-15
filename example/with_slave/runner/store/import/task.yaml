@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: {{ cat "importedTasks" .Dynamic.LoopCount }}
+    bucket_id: "bucketForApp"
+    store_key: {{ cat "retrievedTasksLists" .Dynamic.LoopCount }}

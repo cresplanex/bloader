@@ -8,6 +8,7 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $userData := get $.Values (cat "importedUsers" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
         {{- $randOnPlan := randInt 0 3 }}
@@ -15,7 +16,7 @@ data:
           - id: {{ $iter }}
             name: {{ randAlpha $randOnName | title }}
             userIds: 
-              - {{ (index $.Values.retrievedUsersLists $iter).userProfile.userId }}
+              - {{ (index $userData $index).userProfile.userId }}
             plan: {{ index $planList $randOnPlan }}
         {{- $iter = add $iter 1 }}
         {{- end }}

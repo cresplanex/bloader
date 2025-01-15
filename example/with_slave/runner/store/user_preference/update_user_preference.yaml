@@ -9,12 +9,13 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $data := get $.Values (cat "importedUsersWithPreference" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
         {{- $randOnTimezone := randInt 0 8 }}
         {{- $randOnTheme := randInt 0 3 }}
           - id: {{ $iter }}
-            userPreferenceId: {{ (index $.Values.retrievedUsersListsWithPreference $iter).userPreference.userPreferenceId }}
+            userPreferenceId: {{ (index $data $index).userPreference.userPreferenceId }}
             timezone: {{ index $timezoneList $randOnTimezone }}
             theme: {{ index $themeList $randOnTheme }}
             language: {{ randAlpha 2 | lower }}

@@ -1,10 +1,11 @@
 kind: Flow
 step:
-  concurrency: -1
+  concurrency: 0
   flows:
     - id: "retrieve_users"
       type: file
-      file: "store/user_profile/retrieve_users_with_preference.yaml"
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/import/user_with_preference.yaml"
     - id: "find_user_preferences"
       type: file
       depends_on:

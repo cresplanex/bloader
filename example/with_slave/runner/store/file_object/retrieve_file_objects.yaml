@@ -11,18 +11,19 @@ request:
   method: GET
   query_param:
     pagination: "offset"
-    limit: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
-    offset: 0
+    limit: {{ .Values.RequestPerSlaveCount }}
+    offset: {{ mul .Dynamic.LoopCount .Values.RequestPerSlaveCount }}
   path_variables: {}
   body_type: "json"
   body: {}
   response_type: "json"
   data: []
-  store_data: []
-  memory_data:
-    - key: "retrievedFileObjectsLists"
+  store_data:
+    - bucket_id: "bucketForApp"
+      store_key: {{ cat "retrievedFileObjectsLists" .Dynamic.LoopCount }}
       extractor:
         type: "jmesPath"
-        jmes_path: "data"
+        jmes_path: "data.listData"
         on_nil: "error"
+  memory_data: []
 

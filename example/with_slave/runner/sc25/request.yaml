@@ -29,9 +29,9 @@ requests:
 {{- end }}
     body: {}
     success_break:
-      - time
+      - count
     break:
-      time: {{ $.ThreadValues.BreakTime }}
+      count: {{ $.Values.RequestPerSlaveCount }}
       sys_error: true
       parse_error: true
       write_error: true

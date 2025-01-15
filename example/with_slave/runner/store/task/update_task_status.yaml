@@ -8,11 +8,12 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $data := get $.Values (cat "importedTasks" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
         {{- $randOnStatus := randInt 0 4 }}
           - id: {{ $iter }}
-            taskId: {{ (index $.Values.retrievedTasksLists $iter).taskId }}
+            taskId: {{ (index $data $index).taskId }}
             status: {{ index $statusList $randOnStatus }}
         {{- $iter = add $iter 1 }}
         {{- end }}

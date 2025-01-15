@@ -11,8 +11,8 @@ request:
   method: GET
   query_param:
     pagination: "offset"
-    limit: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
-    offset: 0
+    limit: {{ .Values.RequestPerSlaveCount }}
+    offset: {{ mul .Dynamic.LoopCount .Values.RequestPerSlaveCount }}
     with:
       - userPreference
   path_variables: {}
@@ -20,11 +20,12 @@ request:
   body: {}
   response_type: "json"
   data: []
-  store_data: []
-  memory_data:
-    - key: "retrievedUsersListsWithPreference"
+  store_data:
+    - bucket_id: "bucketForApp"
+      store_key: {{ cat "retrievedUsersListsWithPreference" .Dynamic.LoopCount }}
       extractor:
         type: "jmesPath"
-        jmes_path: "data"
+        jmes_path: "data.listData"
         on_nil: "error"
+  memory_data: []
 

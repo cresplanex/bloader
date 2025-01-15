@@ -1,4 +1,4 @@
-## Example Guideline
+## Example Guideline 📑
 
 > Here is an example of a benchmark test using `Bloader`. These are just examples, but should be sufficient for the use of this tool. Create a scenario test that works for you, referring to the one closest to your use case.
 
@@ -24,12 +24,20 @@ It is defined using many Kinds, and as for Slave, it is set up using `terraform`
     ```bash
     terraform -chdir=slave_setup/ec2 apply
     ```
-3. `SSH Connect`(Optional)
+3. Rewriting the address of SLAVE
+   Change the definition in `with_slave/runner/slave/memory.yaml` to the confirmed IP address.
+4. `SSH Connect`(Optional)
     Save the IP address output when `terraform apply` is done to `$IP_ADDRESS`.
     ```bash
     ssh -i ssh_keys/slave.id_rsa ec2-user@${IP_ADDRESS}
     ```
-- `destroy`
-    ```bash
-    terraform -chdir=slave_setup/ec2 destroy
-    ```
+
+> [!NOTE]  
+> For actual testing, change [bloader.yaml](with_slave/bloader.yaml) and each request definition to your own, and check [scenario execution example](with_slave/runner/CASE.md).
+
+##### Destroy
+
+```bash
+terraform -chdir=slave_setup/ec2 destroy
+```
+

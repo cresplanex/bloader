@@ -8,13 +8,15 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $data := get $.Values (cat "importedTeams" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
+        {{- $userData := get $.Values (cat "importedUsers" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
-        {{- $fixedIter := mod $iter $sumCount }}
+        {{- $fixedIndex := mod (add $index 1) $.Values.RequestPerSlaveCount }}
           - id: {{ $iter }}
-            teamId: {{ (index $.Values.retrievedOrganizationsLists $iter).teamId }}
+            teamId: {{ (index $data $index).teamId }}
             userIds: 
-              - {{ (index $.Values.retrievedUsersLists $fixedIter).userProfile.userId }}
+              - {{ (index $.Values.retrievedUsersLists $fixedIndex).userProfile.userId }}
         {{- $iter = add $iter 1 }}
         {{- end }}
       {{- end }}

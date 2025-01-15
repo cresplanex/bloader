@@ -1,13 +1,15 @@
 kind: Flow
 step:
-  concurrency: -1
+  concurrency: 0
   flows:
     - id: "retrieve_users"
       type: file
-      file: "store/user_profile/retrieve_users.yaml"
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/import/user.yaml"
     - id: "retrieve_teams"
       type: file
-      file: "store/team/retrieve_teams.yaml"
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/import/team.yaml"
     - id: "add_team_user"
       type: file
       depends_on:

@@ -7,14 +7,16 @@ data:
     {{- range $sIndex, $sElement := until .Values.SlaveCount }}
       - list_per_slave:
       {{- range $tIndex, $tElement := until $.Values.ThreadPerSlaveCount }}
+        {{- $orgData := get $.Values (cat "importedOrganizations" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
+        {{- $userData := get $.Values (cat "importedUsers" (add (mul $sIndex $.Values.ThreadPerSlaveCount) $tIndex))}}
         - list_per_thread:
         {{- range $index, $element := until $.Values.RequestPerSlaveCount }}
         {{- $randOnName := randInt 5 10 }}
           - id: {{ $iter }}
             name: {{ randAlpha $randOnName | title }}
-            organizationId: {{ (index $.Values.retrievedOrganizationsLists $iter).organizationId }}
+            organizationId: {{ (index $orgData $index).organizationId }}
             userIds: 
-              - {{ (index $.Values.retrievedUsersLists $iter).userProfile.userId }}
+              - {{ (index $userData $index).userProfile.userId }}
         {{- $iter = add $iter 1 }}
         {{- end }}
       {{- end }}

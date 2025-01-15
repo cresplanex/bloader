@@ -1,0 +1,12 @@
+kind: Flow
+step:
+  concurrency: 0
+  flows:
+    - id: "retrieve_users"
+      type: file
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/user_profile/retrieve_users.yaml"
+    - id: "retrieve_users_with_preference"
+      type: file
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/user_profile/retrieve_users_with_preference.yaml"

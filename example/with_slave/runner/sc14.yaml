@@ -5,13 +5,6 @@ step:
     - id: "store"
       type: flow
       mkdir: false
-      values:
-        - key: "ThreadPerSlaveCount"
-          value: 25
-        - key: "RequestPerSlaveCount"
-          value: 3010
-        - key: "SlaveCount"
-          value: 4
       concurrency: -1
       flows:
         - id: "findTeamsStore"
@@ -37,9 +30,9 @@ step:
           mkdir: false
           values: []
           thread_only_values: []
-    - id: "main"
+    - id: "sc14"
       type: file
-      mkdir: false
+      mkdir: true
       file: "sc14/flow.yaml"
       values: []
       thread_only_values: []

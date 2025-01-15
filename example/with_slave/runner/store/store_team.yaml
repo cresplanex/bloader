@@ -1,0 +1,8 @@
+kind: Flow
+step:
+  concurrency: 0
+  flows:
+    - id: "retrieve_teams"
+      type: file
+      count: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount }}
+      file: "store/team/retrieve_teams.yaml"
