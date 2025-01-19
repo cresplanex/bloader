@@ -680,16 +680,17 @@ func run(
 		var wg sync.WaitGroup
 		sem := make(chan struct{}, concurrency)
 		for i, executor := range executors {
-			if err := executor.waitFunc(ctx); err != nil {
-				log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
-					logger.Value("error", err))
-				return fmt.Errorf("failed to wait: %w", err)
-			}
-
 			wg.Add(1)
 
 			go func(preExecutor flowExecutor) {
 				defer wg.Done()
+
+				if err := executor.waitFunc(ctx); err != nil {
+					log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
+						logger.Value("error", err))
+					atomicErr.Store(&syncError{Err: err})
+					cancel()
+				}
 
 				defer func() {
 					if err := preExecutor.castFunc(ctx); err != nil {
