@@ -131,7 +131,7 @@ func (c *ConnectionContainer) Connect(
 			)
 		}
 
-		var retryPolicy = `{
+		retryPolicy := `{
 			"loadBalancingConfig": [ { "round_robin": {} } ],
 
             "methodConfig": [{
