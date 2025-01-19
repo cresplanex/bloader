@@ -41,7 +41,7 @@ func (q MassRequestContent[Req]) MassRequestExecute(
 		waitForResponse := q.ResponseWait
 		var count int
 		chanForWait := make(chan struct{})
-		defer close(chanForWait)
+		// defer close(chanForWait) // TODO: close channel
 
 		client := &http.Client{
 			Timeout: 10 * time.Minute,
