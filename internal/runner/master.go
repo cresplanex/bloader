@@ -131,6 +131,26 @@ func (c *ConnectionContainer) Connect(
 			)
 		}
 
+		var retryPolicy = `{
+			"loadBalancingConfig": [ { "round_robin": {} } ],
+
+            "methodConfig": [{
+                // config per method or all methods under service
+                "name": [{"service": "cresplanex.bloader.v1.BloaderSlaveService"}],
+
+                "retryPolicy": {
+                    "MaxAttempts": 5,
+                    "InitialBackoff": ".05s",
+                    "MaxBackoff": "1s",
+                    "BackoffMultiplier": 2.0,
+                    // this value is grpc code
+                    "RetryableStatusCodes": [ "UNAVAILABLE" ]
+                }
+            }]
+        }`
+
+		grpc.WithDefaultServiceConfig(retryPolicy)
+
 		conn, err := grpc.NewClient(slave.URI, grpcDialOptions...)
 		if err != nil {
 			return fmt.Errorf("failed to connect to slave: %w", err)
