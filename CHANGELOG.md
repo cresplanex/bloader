@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.5] - 2025-01-19
+
+### 🐞 Bug fixes
+✔️ Avoid temporary panic with chan for wait close (omniarchy <k.hayashi@cresplanex.com>) [2025-01-19 23:49:16 +0900]
+
+
+### 💻 Chores
+✔️ Update with_slave example case (omniarchy <k.hayashi@cresplanex.com>) [2025-01-16 00:48:48 +0900]
+
+
 ## [v1.0.4] - 2025-01-15
 
 ### 🐞 Bug fixes
