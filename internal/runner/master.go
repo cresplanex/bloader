@@ -299,6 +299,20 @@ func (c *ConnectionContainer) disconnect(slaveID string) error {
 	return nil
 }
 
+// Disconnect removes a connection from the map.
+func (c *ConnectionContainer) Disconnect(_ context.Context, slaveIDs []string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for _, slaveID := range slaveIDs {
+		if err := c.disconnect(slaveID); err != nil {
+			return fmt.Errorf("failed to disconnect from slave: %w", err)
+		}
+	}
+
+	return nil
+}
+
 // AllDisconnect removes all connections from the map.
 func (c *ConnectionContainer) AllDisconnect(_ context.Context) error {
 	c.mu.Lock()

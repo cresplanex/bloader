@@ -13,6 +13,9 @@ import (
 	"github.com/cresplanex/bloader/internal/utils"
 )
 
+// OneExecuteRunnerActionsList represents the list of actions for the OneExecute runner
+var OneExecuteRunnerActionsList = []ActionType{}
+
 // OneExecType represents the type of OneExec
 type OneExecType string
 

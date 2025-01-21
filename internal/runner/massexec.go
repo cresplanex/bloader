@@ -16,6 +16,9 @@ import (
 	"github.com/cresplanex/bloader/internal/utils"
 )
 
+// MassExecuteRunnerActionsList represents the list of actions for the MassExecute runner
+var MassExecuteRunnerActionsList = []ActionType{}
+
 // MassExecType represents the type of MassExec
 type MassExecType string
 
