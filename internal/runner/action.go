@@ -138,7 +138,7 @@ func NewActionCasterFromRunnerKind(kind Kind) (ActionCaster, error) {
 		caster[actionType] = make(chan struct{})
 	}
 
-	return nil, fmt.Errorf("unsupported runner kind: %s", kind)
+	return caster, nil
 }
 
 // FindChannel finds the channel
