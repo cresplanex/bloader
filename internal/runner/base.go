@@ -41,7 +41,7 @@ func (e BaseExecutor) Execute(
 	slaveValues map[string]any,
 	eventCaster EventCaster,
 	actionChan <-chan ActionCastData,
-) error {
+) (err error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
@@ -177,6 +177,27 @@ func (e BaseExecutor) Execute(
 	if err := wait(ctx, e.Logger, validRunner, RunnerSleepValueAfterInit, filename); err != nil {
 		return fmt.Errorf("failed to wait: %w", err)
 	}
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case actionData := <-actionChan:
+				e.Logger.Info(ctx, "received action",
+					logger.Value("action", actionData.Action), logger.Value("actionID", actionData.ActionID))
+				switch actionData.Action {
+				case ActionTypeTermWithErr:
+					e.Logger.Info(ctx, "received term with error",
+						logger.Value("actionID", actionData.ActionID))
+					err = fmt.Errorf("received term with error: %s", actionData.ActionID)
+					cancel()
+				case ActionTypeTermWithoutErr:
+					cancel()
+				}
+			}
+		}
+	}()
 
 	switch validRunner.Kind {
 	case RunnerKindStoreValue:
@@ -411,5 +432,5 @@ func (e BaseExecutor) Execute(
 		return fmt.Errorf("failed to wait: %w", err)
 	}
 
-	return nil
+	return
 }

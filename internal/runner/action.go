@@ -6,10 +6,10 @@ import "fmt"
 type ActionType string
 
 const (
-	// TermWithErr represents the term with error
-	TermWithErr ActionType = "sys:term_with_err"
-	// TermWithoutErr represents the term without error
-	TermWithoutErr ActionType = "sys:term_without_err"
+	// ActionTypeTermWithErr represents the term with error
+	ActionTypeTermWithErr ActionType = "sys:term_with_err"
+	// ActionTypeTermWithoutErr represents the term without error
+	ActionTypeTermWithoutErr ActionType = "sys:term_without_err"
 )
 
 // Actions represents the actions

@@ -131,8 +131,8 @@ type FlowStepFlow struct {
 }
 
 type ActionCastData struct {
-	actionID string
-	action   ActionType
+	ActionID string
+	Action   ActionType
 }
 
 // ValidFlowStepFlow represents a valid flow step flow
@@ -431,8 +431,8 @@ func attachActionsCaster(
 									case <-actionWaitTermChan:
 										return
 									case notifyActionChan <- ActionCastData{
-										actionID: action.ID,
-										action:   action.Type,
+										ActionID: action.ID,
+										Action:   action.Type,
 									}:
 										close(actionWaitTermChan)
 										break
