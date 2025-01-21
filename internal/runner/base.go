@@ -40,6 +40,7 @@ func (e BaseExecutor) Execute(
 	callCount int,
 	slaveValues map[string]any,
 	eventCaster EventCaster,
+	actionChan <-chan ActionCastData,
 ) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

@@ -11,6 +11,11 @@ const (
 	SlaveConnectRunnerEventConnected Event = "slaveConnect:connected"
 )
 
+const (
+	// SlaveConnectRunnerActionDisconnect represents the disconnect action
+	SlaveConnectRunnerActionDisconnect ActionType = "slaveConnect:disconnect"
+)
+
 // SlaveConnect represents the SlaveConnect runner
 type SlaveConnect struct {
 	Slaves []SlaveConnectData `yaml:"slaves"`

@@ -127,6 +127,12 @@ type FlowStepFlow struct {
 	Flows            []FlowStepFlow          `yaml:"flows"`
 	Concurrency      *int                    `yaml:"concurrency"`
 	Executors        []FlowStepFlowExecutor  `yaml:"executors"`
+	Actions          Actions                 `yaml:"actions"`
+}
+
+type ActionCastData struct {
+	actionID string
+	action   ActionType
 }
 
 // ValidFlowStepFlow represents a valid flow step flow
@@ -143,6 +149,8 @@ type ValidFlowStepFlow struct {
 	Concurrency      int
 	Executors        []ValidFlowStepFlowExecutor
 	waitFunc         func(ctx context.Context) error
+	ValidActions     ValidActions
+	NotifyActionChan <-chan ActionCastData
 }
 
 // FlowStepFlowExecutorOutput represents a flow step flow executor output
@@ -275,6 +283,11 @@ func (f FlowStepFlow) Validate(valid *ValidFlowStepFlow, idSet map[string]struct
 	if f.Type == nil {
 		return fmt.Errorf("type is required")
 	}
+	validAction, err := f.Actions.Validate()
+	if err != nil {
+		return fmt.Errorf("failed to validate actions: %w", err)
+	}
+	valid.ValidActions = validAction
 	switch FlowStepFlowType(*f.Type) {
 	case FlowStepFlowTypeFile:
 		valid.Type = FlowStepFlowType(*f.Type)
@@ -346,6 +359,7 @@ type flowExecutor struct {
 	waitFunc        func(ctx context.Context) error
 	castFunc        func(ctx context.Context) error
 	eventCaster     *utils.Broadcaster[Event]
+	actionChan      <-chan ActionCastData
 }
 
 type closer func() error
@@ -369,6 +383,72 @@ func createBroadCastMap(
 		}
 	}
 	return closeFuncs, nil
+}
+
+func attachActionsCaster(
+	ctx context.Context,
+	flows []ValidFlowStepFlow,
+	broadCastMap map[string]*utils.Broadcaster[Event],
+) error {
+	for i, flow := range flows {
+		if len(flow.Flows) > 0 {
+			if err := attachActionsCaster(ctx, flow.Flows, broadCastMap); err != nil {
+				return err
+			}
+		}
+
+		notifyActionChan := make(chan ActionCastData)
+		for _, action := range flow.ValidActions {
+			flowEventMap := make(map[string][]Event)
+			for _, on := range action.On {
+				if _, ok := flowEventMap[on.Flow]; !ok {
+					flowEventMap[on.Flow] = make([]Event, 0)
+				}
+				flowEventMap[on.Flow] = append(flowEventMap[on.Flow], on.Event)
+			}
+
+			actionWaitTermChan := make(chan struct{})
+			for k, v := range flowEventMap {
+				caster, ok := broadCastMap[k]
+				if !ok {
+					return fmt.Errorf("failed to find depends_on %s", k)
+				}
+				waitChan := caster.Subscribe()
+
+				go func() {
+					for {
+						select {
+						case <-ctx.Done():
+							return
+						case <-actionWaitTermChan:
+							return
+						case event := <-waitChan:
+							for _, e := range v {
+								if e == event {
+									select {
+									case <-ctx.Done():
+										return
+									case <-actionWaitTermChan:
+										return
+									case notifyActionChan <- ActionCastData{
+										actionID: action.ID,
+										action:   action.Type,
+									}:
+										close(actionWaitTermChan)
+										break
+									}
+								}
+							}
+						}
+					}
+				}()
+			}
+		}
+		flow.NotifyActionChan = notifyActionChan
+		flows[i] = flow
+	}
+
+	return nil
 }
 
 func attachWaitChan(
@@ -455,6 +535,9 @@ func (f *ValidFlow) Run(
 		}
 	}()
 	if err := attachWaitChan(f.Step.Flows, broadCastMap); err != nil {
+		return err
+	}
+	if err := attachActionsCaster(ctx, f.Step.Flows, broadCastMap); err != nil {
 		return err
 	}
 	return run(
@@ -619,6 +702,7 @@ func run(
 					callCount+1,
 					slaveValues,
 					NewDefaultEventCasterWithBroadcaster(executor.eventCaster),
+					executor.actionChan,
 				)
 				if err != nil {
 					log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
@@ -726,6 +810,7 @@ func run(
 						callCount+1,
 						slaveValues,
 						NewDefaultEventCasterWithBroadcaster(preExecutor.eventCaster),
+						preExecutor.actionChan,
 					)
 					if err != nil {
 						atomicErr.Store(&syncError{Err: err})

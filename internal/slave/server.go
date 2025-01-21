@@ -322,6 +322,7 @@ func (s *Server) CallExec(req *pb.CallExecRequest, stream grpc.ServerStreamingSe
 		0,
 		data.SlaveValues,
 		runner.NewDefaultEventCaster(),
+		make(<-chan runner.ActionCastData),
 	); err != nil {
 		return fmt.Errorf("failed to execute: %w", err)
 	}

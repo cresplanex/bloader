@@ -66,6 +66,7 @@ func Run(ctr *container.Container, filename string, data map[string]any) error {
 		0,
 		slaveValues,
 		eventCaster,
+		make(<-chan ActionCastData),
 	); err != nil {
 		return fmt.Errorf("failed to execute the load test: %w", err)
 	}
