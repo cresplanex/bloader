@@ -22,7 +22,7 @@ type SlaveRequestHandler struct {
 	// chunkSize is an integer.
 	chunkSize int
 	// receiveTermChan is a channel for receiving term.
-	receiveTermChan <-chan ReceiveTermType
+	receiveTermChan <-chan ReceiveTermData
 	// dataBufferMap is a map.
 	dataBufferMap map[string]*bytes.Buffer
 }
@@ -34,7 +34,7 @@ const DefaultChunkSize = 1024
 func NewSlaveRequestHandler(
 	resChan <-chan *pb.ReceiveChanelConnectResponse,
 	cli pb.BloaderSlaveServiceClient,
-	termChan <-chan ReceiveTermType,
+	termChan <-chan ReceiveTermData,
 ) *SlaveRequestHandler {
 	return &SlaveRequestHandler{
 		resChan:         resChan,
@@ -58,12 +58,13 @@ func (rh *SlaveRequestHandler) HandleResponse(
 		select {
 		case <-ctx.Done():
 			return nil
-		case termType := <-rh.receiveTermChan:
+		case termData := <-rh.receiveTermChan:
+			termType := termData.Type
 			switch termType {
 			case ReceiveTermTypeReceiveTermTypeEOF:
 				return nil
 			case ReceiveTermTypeReceiveTermTypeResponseReceiveError:
-				return fmt.Errorf("response receive error")
+				return fmt.Errorf("response receive error: %w", termData.Err)
 			case ReceiveTermTypeReceiveTermTypeStreamContextDone:
 				return nil
 			case ReceiveTermTypeReceiveTermTypeDisconnected:

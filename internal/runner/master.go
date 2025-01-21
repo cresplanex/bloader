@@ -13,8 +13,10 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/cresplanex/bloader/gen/pb/cresplanex/bloader/v1"
 
@@ -22,6 +24,12 @@ import (
 	"github.com/cresplanex/bloader/internal/logger"
 	"github.com/cresplanex/bloader/internal/master"
 )
+
+// ReceiveTermData is a struct that holds the receive term information.
+type ReceiveTermData struct {
+	Type ReceiveTermType
+	Err  error
+}
 
 // ReceiveTermType represents the valid ReceiveTermType runner
 type ReceiveTermType string
@@ -45,7 +53,7 @@ type ConnectionMapData struct {
 	Cli             pb.BloaderSlaveServiceClient
 	ReqChan         <-chan *pb.ReceiveChanelConnectResponse
 	termChan        chan<- struct{}
-	ReceiveTermChan <-chan ReceiveTermType
+	ReceiveTermChan <-chan ReceiveTermData
 }
 
 // ConnectionContainer is a struct that holds the connection information.
@@ -207,7 +215,7 @@ func (c *ConnectionContainer) Connect(
 		}
 
 		reqChan := make(chan *pb.ReceiveChanelConnectResponse)
-		receiveTermChan := make(chan ReceiveTermType)
+		receiveTermChan := make(chan ReceiveTermData)
 		termChan := make(chan struct{})
 
 		ctx, cancel := context.WithCancel(ctx)
@@ -233,13 +241,26 @@ func (c *ConnectionContainer) Connect(
 					case <-ctx.Done():
 						log.Info(ctx, "context done")
 						return
-					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeEOF:
+					case receiveTermChan <- ReceiveTermData{
+						Type: ReceiveTermTypeReceiveTermTypeEOF,
+						Err:  nil,
+					}:
 						log.Info(ctx, "receiveChan EOF")
 					}
 					return
 				}
 				if err != nil {
-					log.Error(ctx, "failed to receive channel connect: %v",
+					st, ok := status.FromError(err)
+					if ok && st.Code() == codes.Canceled {
+						log.Info(ctx, "context canceled rpc error")
+						return
+					}
+					if errors.Is(err, context.Canceled) {
+						log.Info(ctx, "context done")
+						return
+					}
+
+					log.Error(ctx, "failed to receive channel connect",
 						logger.Value("error", err), logger.Value("slaveID", slave.ID))
 
 					// Retry the connection when err is reset by peer
@@ -275,10 +296,11 @@ func (c *ConnectionContainer) Connect(
 					}
 					select {
 					case <-ctx.Done():
-						log.Info(ctx, "context done")
 						return
-					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeResponseReceiveError:
-						log.Info(ctx, "receiveChan response receive error")
+					case receiveTermChan <- ReceiveTermData{
+						Type: ReceiveTermTypeReceiveTermTypeResponseReceiveError,
+						Err:  err,
+					}:
 					}
 
 					return
@@ -298,8 +320,10 @@ func (c *ConnectionContainer) Connect(
 					case <-ctx.Done():
 						log.Info(ctx, "context done")
 						return
-					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeStreamContextDone:
-						log.Info(ctx, "receiveChan context done")
+					case receiveTermChan <- ReceiveTermData{
+						Type: ReceiveTermTypeReceiveTermTypeStreamContextDone,
+						Err:  nil,
+					}:
 					}
 					return
 				case <-termChan:
@@ -309,8 +333,10 @@ func (c *ConnectionContainer) Connect(
 					select {
 					case <-ctx.Done():
 						return
-					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeDisconnected:
-						log.Info(ctx, "receiveChan disconnected")
+					case receiveTermChan <- ReceiveTermData{
+						Type: ReceiveTermTypeReceiveTermTypeDisconnected,
+						Err:  nil,
+					}:
 					}
 					return
 				case reqChan <- res:
