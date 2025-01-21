@@ -135,7 +135,6 @@ func (c *ConnectionContainer) Connect(
 			"loadBalancingConfig": [ { "round_robin": {} } ],
 
             "methodConfig": [{
-                // config per method or all methods under service
                 "name": [{"service": "cresplanex.bloader.v1.BloaderSlaveService"}],
 
                 "retryPolicy": {
@@ -143,7 +142,6 @@ func (c *ConnectionContainer) Connect(
                     "InitialBackoff": ".05s",
                     "MaxBackoff": "1s",
                     "BackoffMultiplier": 2.0,
-                    // this value is grpc code
                     "RetryableStatusCodes": [ "UNAVAILABLE" ]
                 }
             }]
