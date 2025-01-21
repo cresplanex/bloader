@@ -149,7 +149,17 @@ func (c *ConnectionContainer) Connect(
             }]
         }`
 
-		grpc.WithDefaultServiceConfig(retryPolicy)
+		grpcDialOptions = append(
+			grpcDialOptions,
+			grpc.WithDefaultServiceConfig(retryPolicy),
+			// grpc.WithKeepaliveParams(
+			// 	keepalive.ClientParameters{
+			// 		Time:                10 * time.Second, // TODO: Set the keepalive parameters from config
+			// 		Timeout:             30 * time.Second, // TODO: Set the keepalive parameters from config
+			// 		PermitWithoutStream: true,
+			// 	},
+			// ),
+		)
 
 		conn, err := grpc.NewClient(slave.URI, grpcDialOptions...)
 		if err != nil {

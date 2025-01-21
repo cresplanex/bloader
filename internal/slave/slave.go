@@ -41,6 +41,27 @@ func Run(ctr *container.Container) error {
 		)
 	}
 
+	// grpcServerOptions = append(grpcServerOptions) // grpc.KeepaliveParams(
+	// 	keepalive.ServerParameters{
+	// 		// TODO: Set the keepalive parameters
+	// 		// MaxConnectionIdle:     ctr.Config.SlaveSetting.Keepalive.MaxConnectionIdle,
+	// 		// MaxConnectionAge:      ctr.Config.SlaveSetting.Keepalive.MaxConnectionAge,
+	// 		// MaxConnectionAgeGrace: ctr.Config.SlaveSetting.Keepalive.MaxConnectionAgeGrace,
+	// 		// Time:                  ctr.Config.SlaveSetting.Keepalive.Time,
+	// 		// Timeout:               ctr.Config.SlaveSetting.Keepalive.Timeout,
+	// 		MaxConnectionIdle:     0,
+	// 		MaxConnectionAge:      0,
+	// 		MaxConnectionAgeGrace: 5 * time.Minute,
+	// 		Time:                  10 * time.Second,
+	// 		Timeout:               30 * time.Second,
+	// 	},
+	// ),
+	// grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+	// 	MinTime:             5 * time.Minute,
+	// 	PermitWithoutStream: true,
+	// }),
+	// grpc.MaxConcurrentStreams(0), // TODO: Set from config
+
 	grpcServer := grpc.NewServer(grpcServerOptions...)
 
 	slCtr := runner.NewConnectionContainer()
