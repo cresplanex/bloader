@@ -417,7 +417,7 @@ func (e BaseExecutor) Execute(
 				logger.Value("error", syncErr.Err))
 			return syncErr.Err
 		}
-		e.Logger.Info(ctx, "connected to slave node")
+		e.Logger.Info(ctx, "term slave connect", logger.Value("slaveIDs", slaveIDs))
 	case RunnerKindFlow:
 		var flow Flow
 		decoder := yaml.NewDecoder(&rawData)

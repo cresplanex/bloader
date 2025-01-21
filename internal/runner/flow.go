@@ -391,31 +391,44 @@ func createBroadCastMap(
 
 func attachActionsCaster(
 	ctx context.Context,
+	log logger.Logger,
 	flows []ValidFlowStepFlow,
 	broadCastMap map[string]*utils.Broadcaster[Event],
 ) error {
 	for i, flow := range flows {
 		if len(flow.Flows) > 0 {
-			if err := attachActionsCaster(ctx, flow.Flows, broadCastMap); err != nil {
+			if err := attachActionsCaster(ctx, log, flow.Flows, broadCastMap); err != nil {
 				return err
 			}
 		}
 
 		notifyActionChan := make(chan ActionCastData)
 		for _, action := range flow.ValidActions {
+
+			log.Info(ctx, "action",
+				logger.Value("flowID", flow.ID),
+				logger.Value("actionID", action.ID),
+				logger.Value("actionType", action.Type),
+			)
 			flowEventMap := make(map[string][]Event)
 			for _, on := range action.On {
 				if _, ok := flowEventMap[on.Flow]; !ok {
 					flowEventMap[on.Flow] = make([]Event, 0)
 				}
 				flowEventMap[on.Flow] = append(flowEventMap[on.Flow], on.Event)
+				log.Info(ctx, "register action trigger event",
+					logger.Value("flowID", flow.ID),
+					logger.Value("actionID", action.ID),
+					logger.Value("onFlow", on.Flow),
+					logger.Value("onEvent", on.Event),
+				)
 			}
 
 			actionWaitTermChan := make(chan struct{})
 			for k, v := range flowEventMap {
 				caster, ok := broadCastMap[k]
 				if !ok {
-					return fmt.Errorf("failed to find depends_on %s", k)
+					return fmt.Errorf("failed to find trigger flow %s", k)
 				}
 				waitChan := caster.Subscribe()
 
@@ -427,8 +440,21 @@ func attachActionsCaster(
 						case <-actionWaitTermChan:
 							return
 						case event := <-waitChan:
+							log.Info(ctx, "event received",
+								logger.Value("flowID", flow.ID),
+								logger.Value("actionID", action.ID),
+								logger.Value("event", event),
+								logger.Value("onFlow", k),
+								logger.Value("onEvent", v),
+							)
 							for _, e := range v {
 								if e == event {
+									log.Info(ctx, "action trigger event matched",
+										logger.Value("flowID", flow.ID),
+										logger.Value("actionID", action.ID),
+										logger.Value("event", event),
+										logger.Value("onFlow", k),
+									)
 									select {
 									case <-ctx.Done():
 										return
@@ -540,7 +566,7 @@ func (f *ValidFlow) Run(
 	if err := attachWaitChan(f.Step.Flows, broadCastMap); err != nil {
 		return err
 	}
-	if err := attachActionsCaster(ctx, f.Step.Flows, broadCastMap); err != nil {
+	if err := attachActionsCaster(ctx, log, f.Step.Flows, broadCastMap); err != nil {
 		return err
 	}
 	return run(
@@ -637,6 +663,7 @@ func run(
 					waitFunc:        flow.waitFunc,
 					castFunc:        castFunc,
 					eventCaster:     caster,
+					actionChan:      flow.NotifyActionChan,
 				}
 				count++
 			}
@@ -661,6 +688,7 @@ func run(
 				waitFunc:        flow.waitFunc,
 				castFunc:        castFunc,
 				eventCaster:     caster,
+				actionChan:      flow.NotifyActionChan,
 			}
 			count++
 		}
