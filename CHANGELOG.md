@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.9] - 2025-01-21
+
+### 🚀 Features
+✔️ Merge pull request #40 from cresplanex/feature-add-action_#39 (HAYASHI KENTA <83863286+ablankz@users.noreply.github.com>) [2025-01-21 20:31:52 +0900]
+
+✔️ Add specific runner action #39 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-21 20:23:25 +0900]
+
+✔️ Add functionally base action term (omniarchy <k.hayashi@cresplanex.com>) [2025-01-21 19:15:03 +0900]
+
+✔️ Implement executor with action #39 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-21 19:04:50 +0900]
+
+✔️ Add action type #39 (omniarchy <k.hayashi@cresplanex.com>) [2025-01-21 19:04:08 +0900]
+
+
+### 🕶️ Styles
+✔️ Fix golangci-lint (omniarchy <k.hayashi@cresplanex.com>) [2025-01-21 20:26:39 +0900]
+
+
 ## [v1.0.8] - 2025-01-21
 
 ### 🚀 Features
