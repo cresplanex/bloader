@@ -178,6 +178,11 @@ func (e BaseExecutor) Execute(
 		return fmt.Errorf("failed to wait: %w", err)
 	}
 
+	actionCaster, err := NewActionCasterFromRunnerKind(validRunner.Kind)
+	if err != nil {
+		return fmt.Errorf("failed to create action caster: %w", err)
+	}
+
 	go func() {
 		for {
 			select {
@@ -194,6 +199,8 @@ func (e BaseExecutor) Execute(
 					cancel()
 				case ActionTypeTermWithoutErr:
 					cancel()
+				default:
+					actionCaster.Send(ctx, actionData.Action)
 				}
 			}
 		}
@@ -355,8 +362,10 @@ func (e BaseExecutor) Execute(
 		}
 		var atomicErr atomic.Pointer[syncError]
 		var wg sync.WaitGroup
+		var slaveIDs []string
 		for _, slave := range validSlaveConnect.Slaves {
 			wg.Add(1)
+			slaveIDs = append(slaveIDs, slave.ID)
 			mapData, ok := e.SlaveConnectContainer.Find(slave.ID)
 			if !ok {
 				return fmt.Errorf("failed to find slave: %s", slave.ID)
@@ -380,6 +389,24 @@ func (e BaseExecutor) Execute(
 				}
 			}(slHandler)
 		}
+		go func() {
+			if actionCh, ok := actionCaster.FindChannel(SlaveConnectRunnerActionDisconnect); ok {
+				select {
+				case <-ctx.Done():
+					return
+				case <-actionCh:
+				}
+
+				if err := e.SlaveConnectContainer.Disconnect(ctx, slaveIDs); err != nil {
+					atomicErr.Store(&syncError{Err: err})
+					e.Logger.Error(ctx, "failed to disconnect from slave",
+						logger.Value("error", err))
+					cancel()
+					return
+				}
+			}
+		}()
+
 		wg.Wait()
 		if syncErr := atomicErr.Load(); syncErr != nil {
 			e.Logger.Error(ctx, "failed to find error",

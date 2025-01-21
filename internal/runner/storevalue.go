@@ -5,6 +5,9 @@ import (
 	"fmt"
 )
 
+// StoreValueRunnerActionsList represents the list of actions for the StoreValue runner
+var StoreValueRunnerActionsList = []ActionType{}
+
 // StoreValue represents the StoreValue runner
 type StoreValue struct {
 	Data []StoreValueData `yaml:"data"`

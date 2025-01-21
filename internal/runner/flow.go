@@ -17,6 +17,9 @@ import (
 	"github.com/cresplanex/bloader/internal/utils"
 )
 
+// FlowRunnerActionsList represents the list of actions for the Flow runner
+var FlowRunnerActionsList = []ActionType{}
+
 // Flow represents the flow runner
 type Flow struct {
 	Step FlowStep `yaml:"step"`

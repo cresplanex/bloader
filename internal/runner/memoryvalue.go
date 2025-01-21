@@ -6,6 +6,9 @@ import (
 	"sync"
 )
 
+// MemoryValueRunnerActionsList represents the list of actions for the MemoryValue runner
+var MemoryValueRunnerActionsList = []ActionType{}
+
 // MemoryValue represents the MemoryValue runner
 type MemoryValue struct {
 	Data []MemoryValueData `yaml:"data"`

@@ -6,6 +6,9 @@ import (
 	"sync"
 )
 
+// StoreImportRunnerActionsList represents the list of actions for the StoreImport runner
+var StoreImportRunnerActionsList = []ActionType{}
+
 // StoreImport represents the StoreImport runner
 type StoreImport struct {
 	Data []StoreImportData `yaml:"data"`

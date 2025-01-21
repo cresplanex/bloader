@@ -16,6 +16,11 @@ const (
 	SlaveConnectRunnerActionDisconnect ActionType = "slaveConnect:disconnect"
 )
 
+// SlaveConnectRunnerActionsList represents the list of actions for the SlaveConnect runner
+var SlaveConnectRunnerActionsList = []ActionType{
+	SlaveConnectRunnerActionDisconnect,
+}
+
 // SlaveConnect represents the SlaveConnect runner
 type SlaveConnect struct {
 	Slaves []SlaveConnectData `yaml:"slaves"`

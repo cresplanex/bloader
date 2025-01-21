@@ -1,6 +1,9 @@
 package runner
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // ActionType represents the action
 type ActionType string
@@ -103,4 +106,61 @@ func (a ActionOn) Validate() (ValidActionOn, error) {
 	}
 	valid.Event = Event(*a.Event)
 	return valid, nil
+}
+
+// ActionCaster represents the action caster
+type ActionCaster map[ActionType]chan struct{}
+
+// NewActionCasterFromRunnerKind creates a new action caster from the runner kind
+func NewActionCasterFromRunnerKind(kind Kind) (ActionCaster, error) {
+	var actionTypes []ActionType
+	switch kind {
+	case RunnerKindStoreValue:
+		actionTypes = StoreValueRunnerActionsList
+	case RunnerKindMemoryValue:
+		actionTypes = MemoryValueRunnerActionsList
+	case RunnerKindStoreImport:
+		actionTypes = StoreImportRunnerActionsList
+	case RunnerKindOneExecute:
+		actionTypes = OneExecuteRunnerActionsList
+	case RunnerKindMassExecute:
+		actionTypes = MassExecuteRunnerActionsList
+	case RunnerKindSlaveConnect:
+		actionTypes = SlaveConnectRunnerActionsList
+	case RunnerKindFlow:
+		actionTypes = FlowRunnerActionsList
+	default:
+		return nil, fmt.Errorf("unsupported runner kind: %s", kind)
+	}
+
+	caster := make(ActionCaster)
+	for _, actionType := range actionTypes {
+		caster[actionType] = make(chan struct{})
+	}
+
+	return nil, fmt.Errorf("unsupported runner kind: %s", kind)
+}
+
+// FindChannel finds the channel
+func (c ActionCaster) FindChannel(actionType ActionType) (chan struct{}, bool) {
+	ch, ok := c[actionType]
+	return ch, ok
+}
+
+// Send sends the action caster
+func (c ActionCaster) Send(ctx context.Context, actionType ActionType) {
+	ch, ok := c.FindChannel(actionType)
+	if ok {
+		select {
+		case ch <- struct{}{}:
+		case <-ctx.Done():
+		}
+	}
+}
+
+// Close closes the action caster
+func (c ActionCaster) Close() {
+	for _, ch := range c {
+		close(ch)
+	}
 }
