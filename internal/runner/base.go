@@ -385,7 +385,7 @@ func (e BaseExecutor) Execute(
 					e.Store,
 				); err != nil {
 					atomicErr.Store(&syncError{Err: err})
-					e.Logger.Error(ctx, "failed to handle response: %v",
+					e.Logger.Error(ctx, "failed to handle response",
 						logger.Value("error", err))
 					cancel()
 					return

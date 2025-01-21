@@ -44,6 +44,8 @@ const (
 	ReceiveTermTypeReceiveTermTypeStreamContextDone ReceiveTermType = "StreamContextDone"
 	// ReceiveTermTypeDisconnected represents the Disconnected
 	ReceiveTermTypeReceiveTermTypeDisconnected ReceiveTermType = "Disconnected"
+	// ReceiveTermTypeContextCanceled represents the ContextCanceled
+	ReceiveTermTypeReceiveTermTypeContextCanceled ReceiveTermType = "ContextCanceled"
 )
 
 // ConnectionMapData is a struct that holds the connection information.
@@ -249,11 +251,14 @@ func (c *ConnectionContainer) Connect(
 					st, ok := status.FromError(err)
 					if ok && st.Code() == codes.Canceled {
 						log.Info(ctx, "context canceled rpc error")
-						return
-					}
-					if errors.Is(err, context.Canceled) {
-						log.Info(ctx, "context canceled")
-						return
+						select {
+						case <-ctx.Done():
+							return
+						case receiveTermChan <- ReceiveTermData{
+							Type: ReceiveTermTypeReceiveTermTypeContextCanceled,
+							Err:  err,
+						}:
+						}
 					}
 
 					log.Error(ctx, "failed to receive channel connect",

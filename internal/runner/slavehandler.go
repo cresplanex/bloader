@@ -69,6 +69,8 @@ func (rh *SlaveRequestHandler) HandleResponse(
 				return nil
 			case ReceiveTermTypeReceiveTermTypeDisconnected:
 				return nil
+			case ReceiveTermTypeReceiveTermTypeContextCanceled:
+				return nil
 			default:
 				return fmt.Errorf("unknown term type: %v", termType)
 			}
