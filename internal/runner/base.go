@@ -191,6 +191,7 @@ func (e BaseExecutor) Execute(
 			case actionData := <-actionChan:
 				e.Logger.Info(ctx, "received action",
 					logger.Value("action", actionData.Action), logger.Value("actionID", actionData.ActionID))
+				//nolint:exhaustive
 				switch actionData.Action {
 				case ActionTypeTermWithErr:
 					e.Logger.Info(ctx, "received term with error",

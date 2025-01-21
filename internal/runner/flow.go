@@ -133,6 +133,7 @@ type FlowStepFlow struct {
 	Actions          Actions                 `yaml:"actions"`
 }
 
+// ActionCastData represents the action cast data
 type ActionCastData struct {
 	ActionID string
 	Action   ActionType

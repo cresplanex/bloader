@@ -300,7 +300,7 @@ func (c *ConnectionContainer) disconnect(slaveID string) error {
 }
 
 // Disconnect removes a connection from the map.
-func (c *ConnectionContainer) Disconnect(ctx context.Context, slaveIDs []string) error {
+func (c *ConnectionContainer) Disconnect(_ context.Context, slaveIDs []string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
