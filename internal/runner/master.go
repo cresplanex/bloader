@@ -262,7 +262,17 @@ func (c *ConnectionContainer) Connect(
 					}
 
 					log.Error(ctx, "failed to receive channel connect",
-						logger.Value("error", err), logger.Value("slaveID", slave.ID))
+						logger.Value("error", err),
+						logger.Value("slaveID", slave.ID),
+						logger.Group("rpc err",
+							logger.Value("isOK", ok),
+							logger.Value("code", st.Code()),
+							logger.Value("isCanceled", st.Code() == codes.Canceled),
+							logger.Value("isCanceledFromMsg", strings.Contains(st.Message(), codes.Canceled.String())),
+							logger.Value("message", st.Message()),
+							logger.Value("details", st.Details()),
+						),
+					)
 
 					// Retry the connection when err is reset by peer
 					if isErrConnectionReset(err) && attempts < maxAttempts {
