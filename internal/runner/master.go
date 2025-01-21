@@ -232,14 +232,10 @@ func (c *ConnectionContainer) Connect(
 
 			for {
 				res, err := receiveStream.Recv()
-				if errors.Is(err, context.Canceled) {
-					return
-				}
 				if errors.Is(err, io.EOF) {
 					log.Info(ctx, "receiveChan EOF")
 					select {
 					case <-ctx.Done():
-						log.Info(ctx, "context done")
 						return
 					case receiveTermChan <- ReceiveTermData{
 						Type: ReceiveTermTypeReceiveTermTypeEOF,
@@ -256,7 +252,7 @@ func (c *ConnectionContainer) Connect(
 						return
 					}
 					if errors.Is(err, context.Canceled) {
-						log.Info(ctx, "context done")
+						log.Info(ctx, "context canceled")
 						return
 					}
 
