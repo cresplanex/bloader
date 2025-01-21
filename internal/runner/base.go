@@ -194,14 +194,16 @@ func (e BaseExecutor) Execute(
 				//nolint:exhaustive
 				switch actionData.Action {
 				case ActionTypeTermWithErr:
-					e.Logger.Info(ctx, "received term with error",
+					e.Logger.Debug(ctx, "received term with error",
 						logger.Value("actionID", actionData.ActionID))
 					err = fmt.Errorf("received term with error: %s", actionData.ActionID)
 					cancel()
 				case ActionTypeTermWithoutErr:
+					e.Logger.Debug(ctx, "received term without error",
+						logger.Value("actionID", actionData.ActionID))
 					cancel()
 				default:
-					actionCaster.Send(ctx, actionData.Action)
+					actionCaster.Send(ctx, e.Logger, actionData.Action)
 				}
 			}
 		}
@@ -396,6 +398,7 @@ func (e BaseExecutor) Execute(
 				case <-ctx.Done():
 					return
 				case <-actionCh:
+					e.Logger.Info(ctx, "received disconnect action")
 				}
 
 				if err := e.SlaveConnectContainer.Disconnect(ctx, slaveIDs); err != nil {

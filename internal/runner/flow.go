@@ -487,7 +487,7 @@ func attachWaitChan(
 					case event := <-waitChan:
 						mustEvents = utils.RemoveElement(mustEvents, event)
 					case <-ctx.Done():
-						return nil
+						return errByContext
 					}
 				}
 				return nil
@@ -679,6 +679,10 @@ func run(
 	if sequential {
 		for i, executor := range executors {
 			if err := executor.waitFunc(ctx); err != nil {
+				if errors.Is(err, errByContext) {
+					return nil
+				}
+
 				log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
 					logger.Value("error", err))
 				return fmt.Errorf("failed to wait: %w", err)
@@ -774,6 +778,11 @@ func run(
 				defer wg.Done()
 
 				if err := executor.waitFunc(ctx); err != nil {
+					if errors.Is(err, errByContext) {
+						cancel()
+						return
+					}
+
 					log.Error(ctx, fmt.Sprintf("failed to wait[%d]", i),
 						logger.Value("error", err))
 					atomicErr.Store(&syncError{Err: err})

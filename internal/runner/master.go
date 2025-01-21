@@ -8,7 +8,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"sync"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -73,6 +75,24 @@ func (c *ConnectionContainer) Find(slaveID string) (*ConnectionMapData, bool) {
 	return conn, true
 }
 
+// isErrConnectionReset checks if the error is connection reset.
+func isErrConnectionReset(err error) bool {
+
+	// 	Connection reset with read error.
+	// Can retry because of power equality.
+	if strings.Contains(err.Error(), "read: connection reset") {
+		return true
+	}
+
+	if strings.Contains(err.Error(), "use of closed network connection") ||
+		strings.Contains(err.Error(), "connection reset") ||
+		strings.Contains(err.Error(), "broken pipe") {
+		return true
+	}
+
+	return false
+}
+
 // Connect adds a connection to the map.
 func (c *ConnectionContainer) Connect(
 	ctx context.Context,
@@ -131,33 +151,33 @@ func (c *ConnectionContainer) Connect(
 			)
 		}
 
-		retryPolicy := `{
-			"loadBalancingConfig": [ { "round_robin": {} } ],
+		// retryPolicy := `{
+		// 	"loadBalancingConfig": [ { "round_robin": {} } ],
 
-            "methodConfig": [{
-                "name": [{"service": "cresplanex.bloader.v1.BloaderSlaveService"}],
+		//     "methodConfig": [{
+		//         "name": [{"service": "cresplanex.bloader.v1.BloaderSlaveService"}],
 
-                "retryPolicy": {
-                    "MaxAttempts": 5,
-                    "InitialBackoff": ".05s",
-                    "MaxBackoff": "1s",
-                    "BackoffMultiplier": 2.0,
-                    "RetryableStatusCodes": [ "UNAVAILABLE" ]
-                }
-            }]
-        }`
+		//         "retryPolicy": {
+		//             "MaxAttempts": 5,
+		//             "InitialBackoff": ".05s",
+		//             "MaxBackoff": "1s",
+		//             "BackoffMultiplier": 2.0,
+		//             "RetryableStatusCodes": [ "UNAVAILABLE" ]
+		//         }
+		//     }]
+		// }`
 
-		grpcDialOptions = append(
-			grpcDialOptions,
-			grpc.WithDefaultServiceConfig(retryPolicy),
-			// grpc.WithKeepaliveParams(
-			// 	keepalive.ClientParameters{
-			// 		Time:                10 * time.Second, // TODO: Set the keepalive parameters from config
-			// 		Timeout:             30 * time.Second, // TODO: Set the keepalive parameters from config
-			// 		PermitWithoutStream: true,
-			// 	},
-			// ),
-		)
+		// grpcDialOptions = append(
+		// 	grpcDialOptions,
+		// 	grpc.WithDefaultServiceConfig(retryPolicy),
+		// 	// grpc.WithKeepaliveParams(
+		// 	// 	keepalive.ClientParameters{
+		// 	// 		Time:                10 * time.Second, // TODO: Set the keepalive parameters from config
+		// 	// 		Timeout:             30 * time.Second, // TODO: Set the keepalive parameters from config
+		// 	// 		PermitWithoutStream: true,
+		// 	// 	},
+		// 	// ),
+		// )
 
 		conn, err := grpc.NewClient(slave.URI, grpcDialOptions...)
 		if err != nil {
@@ -175,10 +195,12 @@ func (c *ConnectionContainer) Connect(
 			return fmt.Errorf("failed to connect to slave: %w", err)
 		}
 
+		conID := res.ConnectionId
+
 		receiveStream, err := cli.ReceiveChanelConnect(
 			ctx,
 			&pb.ReceiveChanelConnectRequest{
-				ConnectionId: res.ConnectionId,
+				ConnectionId: conID,
 			},
 		)
 		if err != nil {
@@ -196,8 +218,16 @@ func (c *ConnectionContainer) Connect(
 			defer close(reqChan)
 			defer close(receiveTermChan)
 
+			// TODO: Set the retry policy from config
+			var maxAttempts = 5
+			var retryInterval = 2 * time.Second
+			attempts := 0
+
 			for {
 				res, err := receiveStream.Recv()
+				if errors.Is(err, context.Canceled) {
+					return
+				}
 				if errors.Is(err, io.EOF) {
 					log.Info(ctx, "receiveChan EOF")
 					select {
@@ -207,12 +237,40 @@ func (c *ConnectionContainer) Connect(
 					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeEOF:
 						log.Info(ctx, "receiveChan EOF")
 					}
-
 					return
 				}
 				if err != nil {
 					log.Error(ctx, "failed to receive channel connect: %v",
 						logger.Value("error", err), logger.Value("slaveID", slave.ID))
+
+					// Retry the connection when err is reset by peer
+					if isErrConnectionReset(err) && attempts < maxAttempts {
+						attempts++
+						log.Warn(ctx, "retrying connection",
+							logger.Value("attempts", attempts),
+							logger.Value("maxAttempts", maxAttempts),
+							logger.Value("retryInterval", retryInterval),
+							logger.Value("slaveID", slave.ID),
+							logger.Value("error", err),
+							logger.Value("res", res),
+						)
+
+						time.Sleep(retryInterval)
+
+						// Do I need the following?
+						// receiveStream, err = cli.ReceiveChanelConnect(
+						// 	ctx,
+						// 	&pb.ReceiveChanelConnectRequest{
+						// 		ConnectionId: conID,
+						// 	},
+						// )
+						// if err != nil {
+						// 	log.Error(ctx, "failed to retry connection: %v", logger.Value("error", err))
+						// 	continue
+						// }
+						continue
+					}
+
 					if err := receiveStream.CloseSend(); err != nil {
 						log.Error(ctx, "failed to close receiveChan: %v", logger.Value("error", err))
 					}
@@ -226,6 +284,8 @@ func (c *ConnectionContainer) Connect(
 
 					return
 				}
+
+				attempts = 0
 				select {
 				case <-ctx.Done():
 					log.Info(ctx, "context done")
@@ -244,13 +304,11 @@ func (c *ConnectionContainer) Connect(
 					}
 					return
 				case <-termChan:
-					log.Info(ctx, "termChan")
 					if err := receiveStream.CloseSend(); err != nil {
 						log.Error(ctx, "failed to close receiveChan: %v", logger.Value("error", err))
 					}
 					select {
 					case <-ctx.Done():
-						log.Info(ctx, "context done")
 						return
 					case receiveTermChan <- ReceiveTermTypeReceiveTermTypeDisconnected:
 						log.Info(ctx, "receiveChan disconnected")

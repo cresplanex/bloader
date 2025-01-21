@@ -3,6 +3,8 @@ package runner
 import (
 	"context"
 	"fmt"
+
+	"github.com/cresplanex/bloader/internal/logger"
 )
 
 // ActionType represents the action
@@ -45,9 +47,9 @@ func (a Actions) Validate() (ValidActions, error) {
 
 // Action represents the action
 type Action struct {
-	ID   *string `yaml:"id"`
-	Type *string `yaml:"type"`
-	On   []ActionOn
+	ID   *string    `yaml:"id"`
+	Type *string    `yaml:"type"`
+	On   []ActionOn `yaml:"on"`
 }
 
 // ValidAction represents the valid action
@@ -148,11 +150,12 @@ func (c ActionCaster) FindChannel(actionType ActionType) (chan struct{}, bool) {
 }
 
 // Send sends the action caster
-func (c ActionCaster) Send(ctx context.Context, actionType ActionType) {
+func (c ActionCaster) Send(ctx context.Context, log logger.Logger, actionType ActionType) {
 	ch, ok := c.FindChannel(actionType)
 	if ok {
 		select {
 		case ch <- struct{}{}:
+			log.Info(ctx, "action sent", logger.Value("action", actionType))
 		case <-ctx.Done():
 		}
 	}
