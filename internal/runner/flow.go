@@ -479,7 +479,6 @@ func attachWaitChan(
 				return fmt.Errorf("failed to find depends_on %s", k)
 			}
 			waitChan := caster.Subscribe()
-			//nolint:unparam
 			flowWaitFuncMap[k] = func(ctx context.Context) error {
 				mustEvents := v
 				for len(mustEvents) > 0 {

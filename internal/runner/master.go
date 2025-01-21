@@ -77,7 +77,6 @@ func (c *ConnectionContainer) Find(slaveID string) (*ConnectionMapData, bool) {
 
 // isErrConnectionReset checks if the error is connection reset.
 func isErrConnectionReset(err error) bool {
-
 	// 	Connection reset with read error.
 	// Can retry because of power equality.
 	if strings.Contains(err.Error(), "read: connection reset") {
@@ -219,8 +218,8 @@ func (c *ConnectionContainer) Connect(
 			defer close(receiveTermChan)
 
 			// TODO: Set the retry policy from config
-			var maxAttempts = 5
-			var retryInterval = 2 * time.Second
+			maxAttempts := 5
+			retryInterval := 2 * time.Second
 			attempts := 0
 
 			for {
