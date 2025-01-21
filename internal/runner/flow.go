@@ -404,7 +404,6 @@ func attachActionsCaster(
 
 		notifyActionChan := make(chan ActionCastData)
 		for _, action := range flow.ValidActions {
-
 			log.Info(ctx, "action",
 				logger.Value("flowID", flow.ID),
 				logger.Value("actionID", action.ID),
