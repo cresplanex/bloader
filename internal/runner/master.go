@@ -286,17 +286,15 @@ func (c *ConnectionContainer) Connect(
 
 						time.Sleep(retryInterval)
 
-						// Do I need the following?
-						// receiveStream, err = cli.ReceiveChanelConnect(
-						// 	ctx,
-						// 	&pb.ReceiveChanelConnectRequest{
-						// 		ConnectionId: conID,
-						// 	},
-						// )
-						// if err != nil {
-						// 	log.Error(ctx, "failed to retry connection: %v", logger.Value("error", err))
-						// 	continue
-						// }
+						receiveStream, err = cli.ReceiveChanelConnect(
+							ctx,
+							&pb.ReceiveChanelConnectRequest{
+								ConnectionId: conID,
+							},
+						)
+						if err != nil {
+							log.Error(ctx, "failed to retry connection: %v", logger.Value("error", err))
+						}
 						continue
 					}
 
