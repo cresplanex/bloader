@@ -68,7 +68,7 @@ func Run(ctr *container.Container) error {
 	defer slCtr.AllDisconnect(ctr.Ctx)
 
 	pb.RegisterBloaderSlaveServiceServer(grpcServer, NewServer(ctr, slCtr))
-	lister, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", ctr.Config.SlaveSetting.Port))
+	lister, err := net.Listen("tcp", fmt.Sprintf(":%d", ctr.Config.SlaveSetting.Port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
