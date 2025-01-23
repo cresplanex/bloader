@@ -41,23 +41,26 @@ func (e BaseExecutor) Execute(
 	slaveValues map[string]any,
 	eventCaster EventCaster,
 	actionChan <-chan ActionCastData,
+	path string,
 ) (err error) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	fmt.Printf(
-		"BaseExecutor.Execute: filename=%s, outputRoot=%s, index=%d, callCount=%d\n",
+		"BaseExecutor.Execute: filename=%s, outputRoot=%s, index=%d, callCount=%d, path=%s\n",
 		filename,
 		outputRoot,
 		index,
 		callCount,
+		path,
 	)
 	defer fmt.Printf(
-		"Terminate BaseExecutor.Execute: filename=%s, outputRoot=%s, index=%d, callCount=%d\n",
+		"Terminate BaseExecutor.Execute: filename=%s, outputRoot=%s, index=%d, callCount=%d, path=%s\n",
 		filename,
 		outputRoot,
 		index,
 		callCount,
+		path,
 	)
 
 	if err := eventCaster.CastEvent(ctx, RunnerEventStart); err != nil {
@@ -426,7 +429,7 @@ func (e BaseExecutor) Execute(
 		}
 		var validFlow ValidFlow
 		if err := validate(ctx, eventCaster, func() error {
-			if validFlow, err = flow.Validate(); err != nil {
+			if validFlow, err = flow.Validate(path); err != nil {
 				return fmt.Errorf("failed to validate flow: %w", err)
 			}
 			return nil

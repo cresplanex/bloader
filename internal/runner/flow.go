@@ -31,8 +31,8 @@ type ValidFlow struct {
 }
 
 // Validate validates a flow runner
-func (r Flow) Validate() (ValidFlow, error) {
-	validFlowStep, err := r.Step.Validate()
+func (r Flow) Validate(rootPath string) (ValidFlow, error) {
+	validFlowStep, err := r.Step.Validate(rootPath)
 	if err != nil {
 		return ValidFlow{}, err
 	}
@@ -52,7 +52,7 @@ type ValidFlowStep struct {
 }
 
 // Validate validates a flow step
-func (r FlowStep) Validate() (ValidFlowStep, error) {
+func (r FlowStep) Validate(rootPath string) (ValidFlowStep, error) {
 	var validFlowStep ValidFlowStep
 	if r.Concurrency == nil {
 		validFlowStep.Concurrency = 0
@@ -70,6 +70,7 @@ func (r FlowStep) Validate() (ValidFlowStep, error) {
 		}
 		idSet[*flow.ID] = struct{}{}
 		validFlowStepFlow.ID = *flow.ID
+		validFlowStepFlow.path = rootPath + "/" + *flow.ID
 		err := flow.Validate(&validFlowStepFlow, idSet)
 		if err != nil {
 			return ValidFlowStep{}, fmt.Errorf("failed to validate flow[%d]: %w", i, err)
@@ -155,6 +156,7 @@ type ValidFlowStepFlow struct {
 	waitFunc         func(ctx context.Context) error
 	ValidActions     ValidActions
 	NotifyActionChan <-chan ActionCastData
+	path             string
 }
 
 // FlowStepFlowExecutorOutput represents a flow step flow executor output
@@ -351,6 +353,7 @@ func (f FlowStepFlow) Validate(valid *ValidFlowStepFlow, idSet map[string]struct
 }
 
 type flowExecutor struct {
+	path            string
 	flowType        FlowStepFlowType
 	filename        string
 	rootDir         string
@@ -663,6 +666,7 @@ func run(
 					castFunc:        castFunc,
 					eventCaster:     caster,
 					actionChan:      flow.NotifyActionChan,
+					path:            flow.path,
 				}
 				count++
 			}
@@ -688,6 +692,7 @@ func run(
 				castFunc:        castFunc,
 				eventCaster:     caster,
 				actionChan:      flow.NotifyActionChan,
+				path:            flow.path,
 			}
 			count++
 		}
@@ -737,6 +742,7 @@ func run(
 					slaveValues,
 					NewDefaultEventCasterWithBroadcaster(executor.eventCaster),
 					executor.actionChan,
+					executor.path,
 				)
 				if err != nil {
 					log.Error(ctx, fmt.Sprintf("failed to execute flow[%d]", i),
@@ -850,6 +856,7 @@ func run(
 						slaveValues,
 						NewDefaultEventCasterWithBroadcaster(preExecutor.eventCaster),
 						preExecutor.actionChan,
+						preExecutor.path,
 					)
 					if err != nil {
 						atomicErr.Store(&syncError{Err: err})
