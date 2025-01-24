@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "importedTeams"
+    bucket_id: "bucketForApp"
+    store_key: "retrievedTeamsLists"

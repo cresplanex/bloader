@@ -1,0 +1,30 @@
+{{- $userData := get $.Values "importedUsers" -}}
+{{- $teamData := get $.Values "importedTeams" -}}
+{{- $iter := 0 -}}
+{{- $teamIter := 0 -}}
+{{- $userIter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "AddTeamUsersLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- if eq $teamIter $userIter }}
+        {{- $teamIter = add $teamIter 1 }}
+        {{- end }}
+          - id: {{ $iter }}
+            teamId: "{{ (index $teamData $teamIter).teamId }}"
+            userIds: 
+              - "{{ (index $userData $userIter).userId }}"
+        {{- $teamIter = add $teamIter 1 }}
+        {{- if eq $teamIter $.ThreadValues.RecordCount }}
+          {{- $userIter = add $userIter 1 }}
+          {{- $teamIter = 0 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

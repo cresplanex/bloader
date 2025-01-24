@@ -1,0 +1,21 @@
+kind: Flow
+sleep:
+  enabled: true
+  values:
+    - duration: {{ .ThreadValues.SleepDuration }}
+      after: init
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_tasks"
+      type: file
+      file: "retrieve/retriever/task.yaml"
+      thread_only_values:
+        - key: "RecordCount"
+          value: "{{ mul .ThreadValues.SlaveCount .ThreadValues.ThreadPerSlaveCount .ThreadValues.RequestPerSlaveCount }}"
+    - id: "import_tasks"
+      type: file
+      file: "retrieve/importer/task.yaml"
+      depends_on:
+        - flow: "retrieve_tasks"
+          event: sys:terminated

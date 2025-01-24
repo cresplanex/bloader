@@ -1,0 +1,8 @@
+kind: StoreImport
+data:
+  - key: "importedUsers"
+    bucket_id: "bucketForApp"
+    store_key: "retrievedUsersLists"
+  - key: "importedUsersWithPreference"
+    bucket_id: "bucketForApp"
+    store_key: "retrievedUsersListsWithPreference"

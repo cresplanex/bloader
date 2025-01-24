@@ -1,0 +1,57 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "import"
+      type: file
+      mkdir: false
+      file: {{ printf "scenario/%s/store_import.yaml" .Values.Case }}
+    - id: "slaveSetup"
+      type: flow
+      mkdir: false
+      concurrency: 0
+      flows:
+        - id: "slaveMemory"
+          type: file
+          mkdir: false
+          file: "slave/memory.yaml"
+          values: []
+          thread_only_values: []
+        - id: "slaveConnect"
+          type: file
+          mkdir: false
+          file: "slave/connect.yaml"
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.SlaveCount }}
+          actions:
+            - id: "disconnect"
+              type: "slaveConnect:disconnect"
+              on:
+                - event: "sys:terminated"
+                  flow: "request"
+    - id: {{ .Values.Case }}
+      type: flow
+      mkdir: true
+      concurrency: -1
+      depends_on:
+        - flow: slaveConnect
+          event: slaveConnect:connected
+        - flow: import
+          event: sys:terminated
+      flows:
+        - id: "metrics"
+          type: file
+          mkdir: true
+          file: "metrics/main.yaml"
+          values:
+            - key: "MetricsInterval"
+              value: "5s"
+            - key: "MetricsBreakTime"
+              value: "90m"
+          thread_only_values: []
+        - id: "request"
+          type: file
+          mkdir: true
+          file: "request.yaml"

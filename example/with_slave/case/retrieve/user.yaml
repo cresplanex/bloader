@@ -1,0 +1,29 @@
+kind: Flow
+sleep:
+  enabled: true
+  values:
+    - duration: {{ .ThreadValues.SleepDuration }}
+      after: init
+step:
+  concurrency: -1
+  flows:
+    - id: "retrieve_users"
+      type: file
+      file: "retrieve/retriever/user.yaml"
+      thread_only_values:
+        - key: "RecordCount"
+          value: "{{ mul .ThreadValues.SlaveCount .ThreadValues.ThreadPerSlaveCount .ThreadValues.RequestPerSlaveCount }}"
+    - id: "retrieve_users_with_preference"
+      type: file
+      file: "retrieve/retriever/user_with_preference.yaml"
+      thread_only_values:
+        - key: "RecordCount"
+          value: "{{ mul .ThreadValues.SlaveCount .ThreadValues.ThreadPerSlaveCount .ThreadValues.RequestPerSlaveCount }}"
+    - id: "import_users"
+      type: file
+      file: "retrieve/importer/user.yaml"
+      depends_on:
+        - flow: "retrieve_users"
+          event: sys:terminated
+        - flow: "retrieve_users_with_preference"
+          event: sys:terminated

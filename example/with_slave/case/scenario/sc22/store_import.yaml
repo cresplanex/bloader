@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "FindFileObjectsLists"
+    bucket_id: "bucketForApp"
+    store_key: "FindFileObjectsLists"

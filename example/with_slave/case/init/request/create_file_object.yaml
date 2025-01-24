@@ -1,0 +1,42 @@
+kind: MassExecute
+type: http
+output:
+  enabled: false
+auth: 
+  enabled: true
+  auth_id: authForWeb
+requests:
+{{- $slaveIndex := .SlaveValues.Index | int }}
+{{- with index .Values.InitCreateFileObjectsLists $slaveIndex }}
+{{- range slice .list_per_slave 0 $.ThreadValues.ThreadPerSlaveCount }}
+  - target_id: "apiServer"
+    endpoint: "/file-objects"
+    method: POST
+    interval: {{ $.ThreadValues.Interval }}
+    await_prev_response: false
+    headers: {}
+    query_param: {}
+    path_variables: {}
+    body_type: json
+{{- if hasKey $.Dynamic "RequestLoopCount" }}
+{{- with index .list_per_thread $.Dynamic.RequestLoopCount }}
+    body:
+      name: "{{ .name }}"
+      path: "{{ .path }}"
+      bucketId: "{{ .bucketId }}"
+{{- end }}
+{{- end }}
+    success_break:
+      - count
+    break:
+      count: {{ $.ThreadValues.RequestPerSlaveCount }}
+      sys_error: true
+      parse_error: true
+      write_error: true
+      status_code:
+        - id: error
+          op: ne
+          value: 200
+    response_type: json
+{{- end }}
+{{- end }}

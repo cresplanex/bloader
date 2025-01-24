@@ -1,0 +1,40 @@
+kind: MassExecute
+type: http
+auth: 
+  enabled: true
+  auth_id: authForWeb
+requests:
+  - target_id: "apiServer"
+    endpoint: {{ $.ThreadValues.Endpoint }}
+    method: GET
+    interval: {{ $.ThreadValues.Interval }}
+    await_prev_response: true
+    headers: {}
+    query_param:
+      with_count: "true"
+      pagination: "offset"
+    path_variables: {}
+    body_type: json
+    body: {}
+    success_break:
+      - responseBody/recordCount
+    break:
+      sys_error: true
+      parse_error: true
+      write_error: true
+      status_code:
+        - id: error
+          op: ne
+          value: 200
+      response_body:
+        - id: recordCount
+          extractor:
+            type: jmesPath
+            jmes_path: "data.countData.count >= `{{ $.ThreadValues.RecordCount }}`"
+    response_type: json
+    data:
+      - key: "{{ $.ThreadValues.RecordCount }}"
+        extractor:
+          type: jmesPath
+          jmes_path: "data.countData.count"
+          on_nil: error

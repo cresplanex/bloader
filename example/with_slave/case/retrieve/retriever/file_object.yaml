@@ -1,0 +1,31 @@
+kind: OneExecute
+type: http
+output:
+  enabled: false
+auth:
+  enabled: true
+  auth_id: authForWeb
+request:
+  target_id: "apiServer"
+  endpoint: "/file-objects"
+  method: GET
+  query_param:
+    pagination: "offset"
+    limit: {{ .ThreadValues.RecordCount }}
+    offset: 0
+    sort_field: create
+    sort_order: desc
+  path_variables: {}
+  body_type: "json"
+  body: {}
+  response_type: "json"
+  data: []
+  store_data:
+    - bucket_id: "bucketForApp"
+      store_key: "retrievedFileObjectsLists"
+      extractor:
+        type: "jmesPath"
+        jmes_path: "data.listData"
+        on_nil: "error"
+  memory_data: []
+

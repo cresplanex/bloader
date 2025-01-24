@@ -1,0 +1,354 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "main"
+      type: flow
+      mkdir: false
+      concurrency: -1
+      flows:
+        - id: "createUser"
+          type: flow
+          mkdir: false
+          concurrency: 0
+          flows:
+            - id: "retrieveUser"
+              type: file
+              file: "retrieve/user.yaml"
+              mkdir: false
+              values: []
+              thread_only_values:
+                - key: "ThreadPerSlaveCount"
+                  value: {{ .Values.ThreadPerSlaveCount }}
+                - key: "RequestPerSlaveCount"
+                  value: {{ .Values.RequestPerSlaveCount }}
+                - key: "SlaveCount"
+                  value: {{ .Values.SlaveCount }}
+                - key: "SleepDuration"
+                  value: "50s"
+        - id: "createFileObject"
+          type: flow
+          mkdir: false
+          concurrency: 0
+          flows:
+            - id: "retrieveFileObject"
+              type: file
+              file: "retrieve/file_object.yaml"
+              mkdir: false
+              values: []
+              thread_only_values:
+                - key: "ThreadPerSlaveCount"
+                  value: {{ .Values.ThreadPerSlaveCount }}
+                - key: "RequestPerSlaveCount"
+                  value: {{ .Values.RequestPerSlaveCount }}
+                - key: "SlaveCount"
+                  value: {{ .Values.SlaveCount }}
+                - key: "SleepDuration"
+                  value: "30s"
+        - id: "createOrganization"
+          type: flow
+          mkdir: false
+          concurrency: 0
+          flows:
+            - id: "retrieveOrganization"
+              type: file
+              file: "retrieve/organization.yaml"
+              mkdir: false
+              values: []
+              thread_only_values:
+                - key: "ThreadPerSlaveCount"
+                  value: {{ .Values.ThreadPerSlaveCount }}
+                - key: "RequestPerSlaveCount"
+                  value: {{ .Values.RequestPerSlaveCount }}
+                - key: "SlaveCount"
+                  value: {{ .Values.SlaveCount }}
+                - key: "SleepDuration"
+                  value: "3s"
+            - id: retrieveTeam
+              type: file
+              file: "retrieve/team.yaml"
+              mkdir: false
+              values: []
+              thread_only_values:
+                - key: "ThreadPerSlaveCount"
+                  value: {{ .Values.ThreadPerSlaveCount }}
+                - key: "RequestPerSlaveCount"
+                  value: {{ .Values.RequestPerSlaveCount }}
+                - key: "SlaveCount"
+                  value: {{ .Values.SlaveCount }}
+                - key: "SleepDuration"
+                  value: "3s"
+        - id: "createTask"
+          type: flow
+          mkdir: false
+          concurrency: 0
+          flows:
+            - id: "retrieveTask"
+              type: file
+              file: "retrieve/task.yaml"
+              mkdir: false
+              values: []
+              thread_only_values:
+                - key: "ThreadPerSlaveCount"
+                  value: {{ .Values.ThreadPerSlaveCount }}
+                - key: "RequestPerSlaveCount"
+                  value: {{ .Values.RequestPerSlaveCount }}
+                - key: "SlaveCount"
+                  value: {{ .Values.SlaveCount }}
+                - key: "SleepDuration"
+                  value: "3s"
+        - id: "StoreCreateUser"
+          type: file
+          file: "init/store/create_user.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+        - id: "StoreCreateFileObject"
+          type: file
+          file: "init/store/create_file_object.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+        - id: "StoreCreateOrganization"
+          type: file
+          file: "init/store/create_organization.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createUser
+              event: sys:terminated
+        - id: "StoreCreateTeam"
+          type: file
+          file: "init/store/create_team.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createOrganization
+              event: sys:terminated
+            - flow: createUser
+              event: sys:terminated
+        - id: "StoreCreateTask"
+          type: file
+          file: "init/store/create_task.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createFileObject
+              event: sys:terminated
+            - flow: createOrganization
+              event: sys:terminated
+            - flow: createUser
+              event: sys:terminated
+        - id: "StoreUpdateUserPreference"
+          type: file
+          file: "init/store/update_user_preference.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createUser
+              event: sys:terminated
+        - id: "StoreUpdateTaskStatus"
+          type: file
+          file: "init/store/update_task_status.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createTask
+              event: sys:terminated
+        - id: "AddOrganizationUser"
+          type: file
+          file: "init/store/add_organization_user.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createOrganization
+              event: sys:terminated
+            - flow: createUser
+              event: sys:terminated
+        - id: "AddTeamUser"
+          type: file
+          file: "init/store/add_team_user.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createOrganization
+              event: sys:terminated
+            - flow: createUser
+              event: sys:terminated
+        - id: "FindUser"
+          type: file
+          file: "init/store/find_user.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createUser
+              event: sys:terminated
+        - id: "FindUserPreference"
+          type: file
+          file: "init/store/find_user_preference.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createUser
+              event: sys:terminated
+        - id: "FindTask"
+          type: file
+          file: "init/store/find_task.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createTask
+              event: sys:terminated
+        - id: "FindTeam"
+          type: file
+          file: "init/store/find_team.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createOrganization
+              event: sys:terminated
+        - id: "FindOrganization"
+          type: file
+          file: "init/store/find_organization.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createOrganization
+              event: sys:terminated
+        - id: "FindFileObject"
+          type: file
+          file: "init/store/find_file_object.yaml"
+          mkdir: false
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.LoadSlaveCount }}
+            - key: "ThreadPerSlaveCount"
+              value: {{ .Values.LoadThreadPerSlaveCount }}
+            - key: "RequestPerSlaveCount"
+              value: {{ .Values.LoadRequestPerSlaveCount }}
+            - key: "RecordCount"
+              value: {{ mul .Values.SlaveCount .Values.ThreadPerSlaveCount .Values.RequestPerSlaveCount }}
+          depends_on:
+            - flow: createFileObject
+              event: sys:terminated

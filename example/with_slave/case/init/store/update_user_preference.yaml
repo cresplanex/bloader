@@ -1,0 +1,26 @@
+{{- $userData := get $.Values "importedUsersWithPreference" -}}
+{{- $timezoneList := list "America/New_York" "America/Los_Angeles" "America/Chicago" "America/Denver" "America/Phoenix" "America/Anchorage" "America/Adak" "Pacific/Honolulu" -}}
+{{- $themeList := list "dark" "light" "system" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "UpdateUserPreferencesLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $randOnTimezone := randInt 0 8 }}
+        {{- $randOnTheme := randInt 0 3 }}
+        {{- $fixedIter := mod $iter $.ThreadValues.RecordCount }}
+          - id: {{ $iter }}
+            userPreferenceId: {{ (index $userData $fixedIter).userPreference.userPreferenceId }}
+            timezone: {{ index $timezoneList $randOnTimezone }}
+            theme: {{ index $themeList $randOnTheme }}
+            language: {{ randAlpha 2 | lower }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

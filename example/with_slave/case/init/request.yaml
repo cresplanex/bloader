@@ -1,0 +1,24 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "cmdRequest" 
+      type: slaveCmd
+      mkdir: false
+      thread_only_values:
+        - key: "Interval"
+          value: {{ .ThreadValues.Interval }}
+        - key: "ThreadPerSlaveCount"
+          value: {{ .ThreadValues.ThreadPerSlaveCount }}
+        - key: "RequestPerSlaveCount"
+          value: {{ .ThreadValues.RequestPerSlaveCount }}
+      executors:
+        {{- range slice .Values.SlaveLists 0 .Values.SlaveCount }}
+        - slave_id: "{{ .id }}"
+          output:
+            enabled: false
+          inherit_values: true
+          additional_values: []
+          additional_thread_only_values: []
+        {{- end }}
+      file: {{ printf "init/request/%s.yaml" .ThreadValues.Case }}

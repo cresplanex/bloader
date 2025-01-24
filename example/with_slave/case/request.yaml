@@ -1,0 +1,27 @@
+kind: Flow
+step:
+  concurrency: -1
+  flows:
+    - id: "slaveExecute"
+      type: slaveCmd
+      mkdir: false
+      thread_only_values:
+        - key: "Interval"
+          value: "100ms"
+        - key: "ThreadPerSlaveCount"
+          value: {{ .Values.ThreadPerSlaveCount }}
+        - key: "RequestPerSlaveCount"
+          value: {{ .Values.RequestPerSlaveCount }}
+        - key: "Limit"
+          value: {{ .Values.Limit }}
+      executors:
+        {{- range slice .Values.SlaveLists 0 .Values.SlaveCount }}
+        - slave_id: "{{ .id }}"
+          output:
+            enabled: true
+            root_path: "{{ .id }}"
+          inherit_values: true
+          additional_values: []
+          additional_thread_only_values: []
+        {{- end }}
+      file: {{ printf "scenario/%s/request.yaml" .Values.Case }}

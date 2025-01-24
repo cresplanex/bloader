@@ -1,0 +1,30 @@
+{{- $userData := get $.Values "importedUsers" -}}
+{{- $organizationData := get $.Values "importedOrganizations" -}}
+{{- $iter := 0 -}}
+{{- $organizationIter := 0 -}}
+{{- $userIter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "AddOrganizationUsersLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- if eq $organizationIter $userIter }}
+        {{- $organizationIter = add $organizationIter 1 }}
+        {{- end }}
+          - id: {{ $iter }}
+            organizationId: "{{ (index $organizationData $organizationIter).organizationId }}"
+            userIds: 
+              - "{{ (index $userData $userIter).userId }}"
+        {{- $organizationIter = add $organizationIter 1 }}
+        {{- if eq $organizationIter $.ThreadValues.RecordCount }}
+          {{- $userIter = add $userIter 1 }}
+          {{- $organizationIter = 0 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

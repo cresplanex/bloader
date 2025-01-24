@@ -1,0 +1,19 @@
+{{- $organizationData := get $.Values "importedOrganizations" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "FindOrganizationsLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $fixedIter := mod $iter $.ThreadValues.RecordCount }}
+          - id: {{ $iter }}
+            organizationId: {{ (index $organizationData $fixedIter).organizationId }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

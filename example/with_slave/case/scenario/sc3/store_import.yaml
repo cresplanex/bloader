@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "CreateOrganizationsLists"
+    bucket_id: "bucketForApp"
+    store_key: "CreateOrganizationsLists"

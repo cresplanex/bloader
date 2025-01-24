@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "UpdateTasksStatusLists"
+    bucket_id: "bucketForApp"
+    store_key: "UpdateTasksStatusLists"

@@ -1,0 +1,24 @@
+{{- $fileExtensions := list "jpg" "png" "jpeg" "gif" "svg" "webp" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "CreateFileObjectsLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $uid := uuidv4 }}
+        {{- $randOn6to8 := randInt 6 9 }}
+        {{- $fileName := printf "%s.%s" $uid (index $fileExtensions (randInt 0 6)) }}
+        {{- $pathName := printf "%s/%s" (randAlpha $randOn6to8 | lower) $fileName }}
+          - id: {{ $iter }}
+            name: {{ $fileName }}
+            bucketId: {{ uuidv4}}
+            path: {{ $pathName }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

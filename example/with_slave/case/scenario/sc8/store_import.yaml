@@ -1,0 +1,5 @@
+kind: StoreImport
+data:
+  - key: "CreateTasksLists"
+    bucket_id: "bucketForApp"
+    store_key: "CreateTasksLists"

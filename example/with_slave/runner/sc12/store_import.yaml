@@ -1,5 +1,0 @@
-kind: StoreImport
-data:
-  - key: "findUserPreferencesLists"
-    bucket_id: "bucketForApp"
-    store_key: "findUserPreferencesLists"

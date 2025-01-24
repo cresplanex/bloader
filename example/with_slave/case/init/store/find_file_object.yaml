@@ -1,0 +1,19 @@
+{{- $fileObjectData := get $.Values "importedFileObjects" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "FindFileObjectsLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $fixedIter := mod $iter $.ThreadValues.RecordCount }}
+          - id: {{ $iter }}
+            fileObjectId: {{ (index $fileObjectData $fixedIter).fileObjectId }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

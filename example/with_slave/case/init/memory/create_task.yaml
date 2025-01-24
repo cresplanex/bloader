@@ -1,0 +1,33 @@
+{{- $userData := get $.Values "importedUsers" -}}
+{{- $teamData := get $.Values "importedTeams" -}}
+{{- $fileObjectData := get $.Values "importedFileObjects" -}}
+{{- $datetimeFormat := "2006-01-02T15:04:05" -}}
+{{- $currentDatetime := now -}}
+{{- $iter := 0 -}}
+kind: MemoryValue
+data:
+  - key: "InitCreateTasksLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $randOnTitle := randInt 5 10 }}
+        {{- $randOnDescription := randInt 10 30 }}
+        {{- $startDatetime := $currentDatetime | date_modify (printf "-%dh" (randInt 1 72)) }}
+        {{- $dueDatetime := $startDatetime | date_modify (printf "+%dh" (randInt 1 72)) }}
+        {{- $fixedIter := mod $iter $.ThreadValues.RecordCount }}
+          - id: {{ $iter }}
+            title: "{{ randAlpha $randOnTitle | title }}"
+            description: "{{ randAlpha $randOnDescription }}"
+            teamId: "{{ (index $teamData $fixedIter).teamId }}"
+            chargeUserId: "{{ (index $userData $fixedIter).userId }}"
+            attachmentIds:
+              - "{{ (index $fileObjectData $fixedIter).fileObjectId }}"
+            startDatetime: {{ $startDatetime | date $datetimeFormat }}
+            dueDatetime: {{ $dueDatetime | date $datetimeFormat }}
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}

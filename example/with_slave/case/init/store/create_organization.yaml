@@ -1,0 +1,25 @@
+{{- $userData := get $.Values "importedUsers" -}}
+{{- $planList := list "BASIC" "STANDARD" "PREMIUM" -}}
+{{- $iter := 0 -}}
+kind: StoreValue
+data:
+  - bucket_id: "bucketForApp"
+    key: "CreateOrganizationsLists"
+    value:
+    {{- range $sIndex, $sElement := until .ThreadValues.SlaveCount }}
+      - list_per_slave:
+      {{- range $tIndex, $tElement := until $.ThreadValues.ThreadPerSlaveCount }}
+        - list_per_thread:
+        {{- range $index, $element := until $.ThreadValues.RequestPerSlaveCount }}
+        {{- $randOnPlan := randInt 0 3 }}
+        {{- $randOnName := randInt 5 10 }}
+        {{- $fixedIter := mod $iter $.ThreadValues.RecordCount }}
+          - id: {{ $iter }}
+            name: "{{ randAlpha $randOnName | title }}"
+            userIds: 
+              - "{{ (index $userData $fixedIter).userId }}"
+            plan: "{{ index $planList $randOnPlan }}"
+        {{- $iter = add $iter 1 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
