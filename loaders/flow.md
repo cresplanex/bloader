@@ -42,57 +42,73 @@ nav_order: 7
 | `step.flows[].executors.additional_thread_values` | Data stored in the slave's thread-local memory store, valid only within the flow, for slave-specific values.                                                                    | ❌                                              | `[]object` |
 | `step.flows[].executors.additional_thread_values.key` | Key for the slave thread memory store data.                                                                                                                                     | ❌                                              | `string`   |
 | `step.flows[].executors.additional_thread_values.value` | Value for the slave thread memory store data.                                                                                                                                   | ❌                                              | `any`      |
+| `step.flows[].actions` | Action definitions fired by events.                                                                                                                                    | ❌                                              | `[]object`      |
+| `step.flows[].actions[].id` | Action ID for unique.  | ✅ | `string`      |
+| `step.flows[].actions[].type` | Action Type. Check the [Action Types](./action.md) for available action types.  | ✅ | `string`      |
+| `step.flows[].actions[].on` | Specify the trigger on the action.  | ❌ | `[]object`      |
+| `step.flows[].actions[].on[].flow` | Which flow events to subscribe to.  | ✅ | `string`      |
+| `step.flows[].actions[].on[].event` | Which event to wait for in the specified flow. Supported events are listed under [Events](./event.md).  | ✅ | `string`      |
 
 ### Sample
 
 {% raw %}
 ``` yaml
 kind: Flow
-sleep:
-  enabled: true
-  values:
-    - duration: "5s"
-      after: init
 step:
   concurrency: -1
   flows:
-    - id: "slaveConnect"
+    - id: "import"
       type: file
       mkdir: false
-      file: "sc/slave/connect.yaml"
-      values: []
-      thread_only_values: []
-    - id: "metrics"
-      type: file
+      file: {{ printf "scenario/%s/store_import.yaml" .Values.Case }}
+    - id: "slaveSetup"
+      type: flow
+      mkdir: false
+      concurrency: 0
+      flows:
+        - id: "slaveMemory"
+          type: file
+          mkdir: false
+          file: "slave/memory.yaml"
+          values: []
+          thread_only_values: []
+        - id: "slaveConnect"
+          type: file
+          mkdir: false
+          file: "slave/connect.yaml"
+          values: []
+          thread_only_values:
+            - key: "SlaveCount"
+              value: {{ .Values.SlaveCount }}
+          actions:
+            - id: "disconnect"
+              type: "slaveConnect:disconnect"
+              on:
+                - event: "sys:terminated"
+                  flow: "request"
+    - id: {{ .Values.Case }}
+      type: flow
       mkdir: true
-      file: "sc/metrics/main.yaml"
-      values:
-        - key: "MetricsInterval"
-          value: "5s"
-        - key: "MetricsBreakTime"
-          value: "10m"
-      thread_only_values: []
-    - id: "request"
+      concurrency: -1
       depends_on:
         - flow: slaveConnect
           event: slaveConnect:connected
-      type: slaveCmd
-      mkdir: true
-      thread_only_values:
-        - key: "Interval"
-          value: "100ms"
-        - key: "BreakTime"
-          value: "5m"
-      executors:
-        {{- range slice .Values.slaveLists 0 .Values.SlaveCount }}
-        - slave_id: "{{ .id }}"
-          output:
-            enabled: true
-            root_path: "{{ .id }}"
-          inherit_values: true
-          additional_values: []
-          additional_thread_only_values: []
-        {{- end }}
-      file: "sc/sc1/request.yaml"
+        - flow: import
+          event: sys:terminated
+      flows:
+        - id: "metrics"
+          type: file
+          mkdir: true
+          file: "metrics/main.yaml"
+          values:
+            - key: "MetricsInterval"
+              value: "5s"
+            - key: "MetricsBreakTime"
+              value: "90m"
+          thread_only_values: []
+        - id: "request"
+          type: file
+          mkdir: true
+          file: "request.yaml"
 ```
 {% endraw %}

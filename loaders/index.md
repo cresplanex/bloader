@@ -168,7 +168,16 @@ The loader has events, and each loader can start processing or notify the user a
 {: .note }
 > These functions are still developing and many of them are not yet implemented.
 
-This functionality is available through the [Event](. /event.md) section.
+This functionality is available through the [Event](./event.md) section.
+
+## Load Action
+
+By registering actions in the loader, you can define what you want to do by triggering specific flow events.
+
+{: .note }
+> These functions are still developing and many of them are not yet implemented.
+
+This functionality is available through the [Action](./action.md) section.
 
 ---
 
